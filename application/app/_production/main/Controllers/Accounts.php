@@ -8,12 +8,11 @@ namespace App\Controllers
         public function __construct()
         {
             $this -> user_model = new \App\Models\UserModel();
-            $this -> user = new \App\Entities\User();
+            // $this -> user = new \App\Entities\User();
         }
 
         public function index()
         {
-            
         }
 
         /**

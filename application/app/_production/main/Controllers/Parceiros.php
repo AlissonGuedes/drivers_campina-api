@@ -21,7 +21,7 @@ namespace App\Controllers
 				{
 					$data[] = array(
 						'id' => $row -> id,
-						'categoria' => $row -> id_categoria,
+						'categoria' => $row -> categoria,
 						'nome' => $row -> nome,
 						'imagem' => $row -> imagem,
 						'logradouro' => $row -> logradouro,
@@ -36,6 +36,7 @@ namespace App\Controllers
 					);
 				}
 			}
+			echo '<pre>';
 			echo json_encode($data);
 		}
 

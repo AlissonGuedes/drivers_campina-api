@@ -102,15 +102,12 @@ namespace Config
 
 	/** Categorias */
 	$routes -> group('categorias', function($routes){
-		
 		$routes -> add('/', 'Categorias::index');
-
 		$routes -> get('(:num)/parceiros', 'Parceiros::index');
 	});
 
 	/** Parceiros **/
 	$routes -> group('parceiros', function($routes){
-
 		$routes -> get('/', 'Parceiros::index');
 		// $routes -> get('(:num)', 'Parceiros::servicos');
 		$routes -> get('(:num)/servicos', 'Parceiros::servicos');

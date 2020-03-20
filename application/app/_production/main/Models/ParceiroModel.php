@@ -123,11 +123,13 @@ namespace App\Models
 		public function getParceiro()
 		{
 			$tipo = $this -> uri -> getSegment(2);
-			return $this -> select('*')
-						 -> from('tb_parceiro', true)
-						 -> where('status', '1')
-						 -> where('id_categoria', $tipo)
-						 -> orderBy('nome');
+			return $this -> select('P.*, C.categoria')
+						 -> from('tb_parceiro AS P,tb_categoria AS C', true)
+						 -> where('P.status', '1')
+						 -> where('C.status', '1')
+						 -> where('P.id_categoria', $tipo)
+						 -> orderBy('nome')
+						 -> getQuery();
 		}
 
 		public function getServicos()
