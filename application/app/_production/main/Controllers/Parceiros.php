@@ -36,7 +36,6 @@ namespace App\Controllers
 					);
 				}
 			}
-			echo '<pre>';
 			echo json_encode($data);
 		}
 
