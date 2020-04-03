@@ -31,11 +31,11 @@ class Database extends \CodeIgniter\Database\Config
 	 */
 	public $default = [
 		'DSN'      => '',
-		'hostname' => 'localhost',
+		// 'hostname' => 'localhost',
 		// 'database' => 'drivers_campina',
 		// 'username' => 'drivers_campina',
 		// 'password' => 'KYO74{Rpb5VJ',
-		// 'hostname' => 'driverscampina.com.br',
+		'hostname' => 'driverscampina.com.br',
 		'database' => 'driversc_app',
 		'username' => 'driversc_api',
 		'password' => '$oH#RwlwDHAf',
@@ -63,11 +63,11 @@ class Database extends \CodeIgniter\Database\Config
 	 */
 	public $tests = [
 		'DSN'      => '',
-		'hostname' => 'localhost',
+		// 'hostname' => 'localhost',
 		// 'database' => 'drivers_campina',
 		// 'username' => 'drivers_campina',
     	// 'password' => 'KYO74{Rpb5VJ',
-		// 'hostname' => 'driverscampina.com.br',
+		'hostname' => 'driverscampina.com.br',
 		'database' => 'driversc_app',
 		'username' => 'driversc_api',
 		'password' => '$oH#RwlwDHAf',

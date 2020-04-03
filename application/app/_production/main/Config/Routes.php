@@ -115,6 +115,13 @@ namespace Config
 
 	});
 
+	/** Agendamentos **/
+	$routes -> group('agenda', function($routes){
+		$routes -> add('/', '');
+		$routes -> get('/');
+		$routes -> post('/', 'Agenda::marcar');
+	});
+
 	/**
 	 * Verifica o ambiente se a constante ENVIRONMENT for igual a
 	 * "production",
