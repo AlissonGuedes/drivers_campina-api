@@ -116,10 +116,10 @@ namespace Config
 	});
 
 	/** Agendamentos **/
-	$routes -> group('agenda', function($routes){
-		$routes -> add('/', '');
-		$routes -> get('/');
-		$routes -> post('/', 'Agenda::marcar');
+	$routes -> group('servicos', function($routes){
+		// $routes -> add('/', '');
+		// $routes -> get('/');
+		$routes -> post('/agendamentos', 'Agenda::agendamento');
 	});
 
 	/**
