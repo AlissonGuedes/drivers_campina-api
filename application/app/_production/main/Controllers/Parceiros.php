@@ -61,34 +61,32 @@ namespace App\Controllers
 
 		}
 
-		public function parceiros()
-		{
-
-			$data = [];
-			$parceiros = $this -> parceiro_model -> getParceiro() -> getAll();
-
-			if ( isset($parceiros) )
-			{
-				foreach($parceiros as $row)
-				{
-					$data[] = array(
-						'id' => $row -> id,
-						'nome' => $row -> nome,
-						'imagem' => $row -> imagem,
-						'logradouro' => $row -> logradouro,
-						'numero' => $row -> numero,
-						'complemento' => $row -> complemento,
-						'cep' => $row -> cep,
-						'bairro' => $row -> bairro,
-						'cidade' => $row -> cidade,
-						'uf' => $row -> uf,
-						'latitude' => (double) $row -> latitude,
-						'longitude' => (double) $row -> longitude
-					);
-				}
-			}
-			echo json_encode($data);
-		}
+		// public function parceiros()
+		// {
+		// 	$data = [];
+		// 	$parceiros = $this -> parceiro_model -> getParceiro() -> getAll();
+		// 	if ( isset($parceiros) )
+		// 	{
+		// 		foreach($parceiros as $row)
+		// 		{
+		// 			$data[] = array(
+		// 				'id' => $row -> id,
+		// 				'nome' => $row -> nome,
+		// 				'imagem' => $row -> imagem,
+		// 				'logradouro' => $row -> logradouro,
+		// 				'numero' => $row -> numero,
+		// 				'complemento' => $row -> complemento,
+		// 				'cep' => $row -> cep,
+		// 				'bairro' => $row -> bairro,
+		// 				'cidade' => $row -> cidade,
+		// 				'uf' => $row -> uf,
+		// 				'latitude' => (double) $row -> latitude,
+		// 				'longitude' => (double) $row -> longitude
+		// 			);
+		// 		}
+		// 	}
+		// 	echo json_encode($data);
+		// }
 
 		public function servicos()
 		{

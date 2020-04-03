@@ -128,8 +128,7 @@ namespace App\Models
 						 -> where('P.status', '1')
 						 -> where('C.status', '1')
 						 -> where('P.id_categoria', $tipo)
-						 -> orderBy('nome')
-						 -> getQuery();
+						 -> orderBy('nome');
 		}
 
 		public function getServicos()
