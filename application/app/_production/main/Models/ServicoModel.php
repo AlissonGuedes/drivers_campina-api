@@ -181,7 +181,7 @@ namespace App\Models
 				  -> from('tb_servico_agenda', true)
 				  -> where('data', $data)
 				  -> where('hora', $hora)
-				  -> where('servico', $servico)
+				  -> where('id_servico', $servico)
 				  -> getAll();
 
 			if ( isset($agenda_completa) )
