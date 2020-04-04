@@ -115,7 +115,7 @@ namespace Config
 
 	/** Agendamentos **/
 	$routes -> group('servicos', function($routes){
-		$routes -> get('(:num)/agendamentos', 'Servicos::agendar');
+		$routes -> post('(:num)', 'Servicos::agendar');
 	});
 
 	/**
