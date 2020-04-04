@@ -49,7 +49,7 @@ namespace App\Controllers
 
 		public function agendar(){
 			$data = [];
-			$servico = $this -> sevico_model -> agendarServico();
+			$servico = $this -> servico_model -> agendarServico();
 
 			if ( $servico ) {
 				$data = array(
