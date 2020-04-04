@@ -136,97 +136,6 @@ namespace App\Models
 			return $this -> select('*') -> from('tb_servico', true) -> where('id_servico', $servico);
 		}
 
-		/**
-		 * Lista registros da tabela
-		 *
-		 * @param string|array|boolean		$where
-		 * @param string|array				$fields
-		 *
-		 * @return array Model()
-		 */
-		public function getFaq($where = false, $fields = '*')
-		{
-			// Select '*'
-			$this -> select($fields);
-
-			// Where
-			if ( $where )
-				$this -> where($where);
-				
-			$this -> where('status', '1');
-
-			/*
-			 * Adicionar outras condições...
-			 */
-
-			// Like
-			if ( ! empty($_POST['search']['value']) )
-			{
-
-				$or_like = array(
-					'B.id' => $_POST['search']['value'],
-					'B.descricao' => $_POST['search']['value'],
-				);
-
-				$this -> orLike($or_like);
-
-			}
-
-			// Order By
-			if ( ! empty($_POST['order']) )
-			{
-				$orderBy = $this -> order[$_POST['order'][0]['column']];
-				$direction = $_POST['order'][0]['dir'];
-			}
-			else
-			{
-				$orderBy = $this -> order[1];
-				$direction = 'desc';
-			}
-
-			$this -> orderBy($orderBy, $direction);
-
-			// Limit
-			$limit = isset($_POST['length']) ? $_POST['length'] : NULL;
-
-			if ( ! is_null($limit) )
-				$this -> limit($limit);
-
-			// Offset
-			$start = isset($_POST['start']) ? $_POST['start'] : NULL;
-
-			if ( ! is_null($start) )
-				$this -> offset($start);
-
-			return $this;
-
-		}
-
-		//--------------------------------------------------------------------
-
-		/**
-		 * Cadastra novo registro na tabela
-		 *
-		 * @return boolean		true	Caso o registro seja cadastrado normalmente
-		 * 						false	Caso haja algum erro ao cadastrar
-		 */
-		public function getFaqByCity($where = false, $fields = '*')
-		{
-
-			$fields = [
-			'C.id',
-			'C.cidade'];
-
-			$this -> getFaq($where, $fields);
-
-			$this -> distinct(true);
-
-			$this -> join('tb_cidade C', 'C.id = B.id_cidade', 'left');
-
-			return $this;
-
-		}
-
 		//--------------------------------------------------------------------
 
 		/**
@@ -251,6 +160,42 @@ namespace App\Models
 				return true;
 			else
 				return false;
+
+		}
+
+		/**
+		 * Agendar serviço
+		 */
+		public function agendarServico(){
+
+			$data = [];
+			$post = file_get_contents('php://input');
+			$post = json_decode($post);
+
+			$data = isset($post -> data) ? date('Y-m-d', strtotime(str_replace('/', '-', $post -> data))) : null;
+			$hora = isset($post -> hora) ? $post -> hora . ':00' : null;
+			$servico = isset($post -> servico) ? $post -> servico : null;
+			$associado = isset($post -> associado) ? $post -> associado : null;
+
+			$agenda_completa = $this -> select('id, id_servico, id_associado, data, hora, status')
+				  -> from('tb_servico_agenda', true)
+				  -> where('data', $data)
+				  -> where('hora', $hora)
+				  -> where('servico', $servico)
+				  -> getAll();
+
+			if ( isset($agenda_completa) )
+			{
+				foreach ($agenda_completa as $agenda)
+				{
+					if ( $agenda -> id_associado === $associado ) {
+						return false;
+					}
+					else {
+						return true;
+					}
+				}
+			}
 
 		}
 

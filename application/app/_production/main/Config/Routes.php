@@ -87,8 +87,7 @@ namespace Config
 	 * Route Definitions
 	 * --------------------------------------------------------------------
 	 * Como estamos na Pasta Raiz -- main, não se deve adicionar
-	 * grupos
-	 * de rota para dentro do diretório padrão. Não funciona.
+	 * grupos de rota para dentro do diretório padrão. Não funciona.
 	 * A não ser para as classes desta pasta
 	 */
 
@@ -109,7 +108,6 @@ namespace Config
 	/** Parceiros **/
 	$routes -> group('parceiros', function($routes){
 		$routes -> get('/', 'Parceiros::index');
-		// $routes -> get('(:num)', 'Parceiros::servicos');
 		$routes -> get('(:num)/servicos', 'Parceiros::servicos');
 		$routes -> get('(:num)/servicos/(:num)', 'Servicos::agenda');
 
@@ -117,9 +115,7 @@ namespace Config
 
 	/** Agendamentos **/
 	$routes -> group('servicos', function($routes){
-		// $routes -> add('/', '');
-		// $routes -> get('/');
-		$routes -> post('/agendamentos', 'Agenda::agendamento');
+		$routes -> get('(:num)/agendamentos', 'Servicos::agendar');
 	});
 
 	/**

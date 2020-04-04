@@ -60,7 +60,10 @@ namespace App\Controllers
                 } 
                 else
                 {
-                    $data = ['status'=>'error', 'msg' => 'Login obrigatório'];
+                    $data = array(
+						'status'=>'error',
+						'msg' => 'Login obrigatório'
+					);
                 }
 
             }

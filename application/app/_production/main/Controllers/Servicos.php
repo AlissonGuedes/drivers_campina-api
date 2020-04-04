@@ -36,14 +36,34 @@ namespace App\Controllers
 					);
 				}
 			}
+
 			echo json_encode($data);
+
 		}
 
-
-		public function agenda() {
+		public function agendamentos() {
 			$data = [];
 			$servicos = $this -> servico_model -> getAgenda() -> getAll();
 			echo json_encode($servicos);
+		}
+
+		public function agendar(){
+			$data = [];
+			$servico = $this -> sevico_model -> agendarServico();
+
+			if ( $servico ) {
+				$data = array(
+					'status'=>'success',
+					'msg' => 'Agendamento realizado com sucesso!<br>Por favor, aguarde confirmação.'
+				);
+			} else {
+				$data = array(
+					'status'=>'error',
+					'msg' => 'Não foi possível realizar o agendamento.'
+				);
+			}
+
+			echo json_encode($data);
 		}
 
 		public function categorias()
