@@ -107,7 +107,7 @@ namespace Config
 
 	/** Parceiros **/
 	$routes -> group('parceiros', function($routes){
-		$routes -> get('/', 'Parceiros::index');
+		$routes -> get('(:any)', 'Parceiros::index');
 		$routes -> get('(:num)/servicos', 'Parceiros::servicos');
 		$routes -> get('(:num)/servicos/(:num)', 'Servicos::agenda');
 
@@ -115,7 +115,9 @@ namespace Config
 
 	/** Agendamentos **/
 	$routes -> group('servicos', function($routes){
-		$routes -> post('(:num)', 'Servicos::agendar');
+		$routes -> add('/', 'Servicos::index');
+		$routes -> post('/', 'Servicos::agendar');
+		$routes -> put('/', 'Servicos::reagendar');
 	});
 
 	/**

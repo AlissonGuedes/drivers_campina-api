@@ -30,7 +30,7 @@ namespace App\Models
 		 *
 		 * @var string
 		 */
-		protected $returnType = 'App\Entities\Faq';
+		protected $returnType;// = 'App\Entities\Servico';
 
 		/**
 		 * Especificar por quais colunas da tabela
@@ -38,7 +38,7 @@ namespace App\Models
 		 *
 		 * @var array
 		 */
-		private $order = array(
+		protected $order = array(
 			NULL,
 			'B.id',
 			'B.descricao',
@@ -106,12 +106,6 @@ namespace App\Models
 
 			parent :: __construct();
 
-			/**
-			 * @class $this -> faq = new \App\Entities\Faq;
-			 * Retorna uma instância da Entidade Faq (\App\Admin\Entities\Faq)
-			 */
-			// $this -> faq = new \App\Entities\Faq;
-
 		}
 
 		//--------------------------------------------------------------------
@@ -139,155 +133,126 @@ namespace App\Models
 		//--------------------------------------------------------------------
 
 		/**
-		 * Cadastra novo registro na tabela
+		 * Cadastra o agendamento de um serviço
 		 *
 		 * @return boolean		true	Caso o registro seja cadastrado normalmente
 		 * 						false	Caso haja algum erro ao cadastrar
 		 */
-		public function create()
-		{
-
-			$post = $this -> request -> getPost();
-
-			if ( $this -> validate($post) === FALSE )
-				return FALSE;
-
-			$this -> faq -> fill($post);
-
-			$this -> insert($this -> faq);
-
-			if ( $this -> affectedRows() )
-				return true;
-			else
-				return false;
-
-		}
-
-		/**
-		 * Agendar serviço
-		 */
 		public function agendarServico(){
 
-			$data = [];
+			$msg = null;
+			$status = false;
+			$json = [];
 			$post = file_get_contents('php://input');
 			$post = json_decode($post);
 
-			$data = isset($post -> data) ? date('Y-m-d', strtotime(str_replace('/', '-', $post -> data))) : null;
-			$hora = isset($post -> hora) ? $post -> hora . ':00' : null;
+			$id   = isset($post -> id) ? $post -> id : null;
+			$data = isset($post -> data) && !empty($post -> data) ? date('Y-m-d', strtotime(str_replace('/', '-', $post -> data))) : null;
+			$hora = isset($post -> hora) && !empty($post -> hora) ? $post -> hora : null;
 			$servico = isset($post -> servico) ? $post -> servico : null;
 			$associado = isset($post -> associado) ? $post -> associado : null;
 
+			if ( empty($data) ) {
+				$msg[] = ['data' => 'Informe uma data válida.']; 
+			}
+
+			if ( empty($hora) ) {
+				$msg[] = ['hora' => 'Informe uma hora válida.'];
+			}
+
+			if ( empty($data) || empty($hora) ) {
+				$json = ['status' => 'error', 'msg' => $msg];
+				echo json_encode($json);
+				return false;
+			}
+
+			$columns = array(
+				'data' => $data,
+				'hora' => $hora . ':00',
+				'id_servico' => $servico,
+				'id_associado' => $associado
+			);
+
 			$agenda_completa = $this -> select('id, id_servico, id_associado, data, hora, status')
 				  -> from('tb_servico_agenda', true)
-				  -> where('data', $data)
-				  -> where('hora', $hora)
 				  -> where('id_servico', $servico)
-				  -> getAll();
+				  -> where('id_associado', $associado)
+				  -> where('status', 'S')
+				  -> getRow();
 
-			if ( isset($agenda_completa) )
+			if ( $agenda_completa )
 			{
-				foreach ($agenda_completa as $agenda)
+
+				// O associado só pode agendar um mesmo serviço por dia.
+				if ( $agenda_completa -> data === $data )
 				{
-					if ( $agenda -> id_associado === $associado ) {
-						return false;
-					}
-					else {
-						return true;
-					}
+
+					$json = array(
+						'status' => 'error',
+						'title'  => 'Erro',
+						'msg'    => 'Você não pode agendar mais de um serviço por dia com este parceiro.'
+					);
+
+				// Só pode reagendar o mesmo serviço se ainda o status estiver agendado (S)
+				} elseif ( $agenda_completa -> data !== $data ) {
+					
+					$json = array(
+						'status' => 'confirm',
+						'title'  => 'Confirme',
+						'msg'    => 'Você deseja realizar o reagendamento do seu serviço para o dia ' . date('d/m/Y', strtotime($data)) . '?',
+						'fields' => [ 'id' => $agenda_completa -> id, 'data' => $data ]
+					);
+
+				}
+			}
+			else
+			{
+
+				if ( $this -> builder -> insert($columns) )
+				{
+					$json = array(
+						'status'=>'success',
+						'title'  => 'Sucesso!',
+						'msg' => 'Agendamento realizado com sucesso! Por favor, aguarde confirmação.'
+					);
+				}
+				else
+				{
+					$json = array(
+						'status'=>'error',
+						'title'  => 'Erro',
+						'msg' => 'Não foi possível realizar o agendamento. Por favor, tente novamente mais tarde.'
+					);
 				}
 			}
 
-		}
-
-		//--------------------------------------------------------------------
-
-		/**
-		 * Editar registros na tabela
-		 *
-		 * @return boolean		true	Caso o registro seja editado normalmente
-		 * 						false	Caso haja algum erro ao remover
-		 *
-		 *   // Defined as a model property
-		 *   $primaryKey = 'id';
-		 *
-		 *   // Does an insert()
-		 *   $data = [
-		 *           'username' => 'darth',
-		 *           'email'    => 'd.vader@theempire.com'
-		 *   ];
-		 *
-		 *   $userModel->save($data);
-		 *
-		 *   // Performs an update, since the primary key, 'id', is found.
-		 *   $data = [
-		 *           'id'       => 3,
-		 *           'username' => 'darth',
-		 *           'email'    => 'd.vader@theempire.com'
-		 *   ];
-		 *   $userModel->save($data);
-		 *
-		 *   $data = [
-		 *        'username' => 'darth',
-		 *        'email'    => 'd.vader@theempire.com'
-		 *    ];
-		 *
-		 *    $userModel->update($id, $data);
-		 *    $data = [
-		 *        'active' => 1
-		 *    ];
-		 *    $userModel->update([1, 2, 3], $data);
-		 *
-		 *    $userModel
-		 *        ->whereIn('id', [1,2,3])
-		 *        ->set(['active' => 1]
-		 *        ->update();
-		 *
-		 */
-		public function edit()
-		{
-
-			$post = getPut();
-
-			if ( $this -> validate($post) === FALSE )
-				return FALSE;
-
-			$this -> faq -> fill($post);
-
-			$this -> update(['id' => $post['id']], $this -> faq);
-
-			if ( $this -> affectedRows() )
-				return true;
-			else
-				return false;
+			echo json_encode($json);
 
 		}
 
 		//--------------------------------------------------------------------
+		public function reagendarServico(){
+			
+			$status = false;
+			$json = [];
+			$post = file_get_contents('php://input');
+			$post = json_decode($post);
+			
+			$columns = ['data' => $post -> data];
+			$id = $post -> id;
+	
+			$this -> where('id', $id);
 
-		/**
-		 * Remove registros na tabela
-		 *
-		 * @return boolean		true	Caso o registro seja excluído normalmente
-		 * 						false	Caso haja algum erro ao remover
-		 */
-		public function remove()
-		{
-
-			$post = getDelete();
-
-			if ( $this -> validate($post) === FALSE )
-				return FALSE;
-
-			$fields = $post['fields'];
-			$this -> delete($fields);
-
-			if ( $this -> affectedRows() )
-				return true;
-			else
-				return false;
+			if ( $this -> builder -> from('tb_servico_agenda', true) -> update($columns) )
+			{
+				$json = array(
+					'status' => 'success',
+					'title'  => 'Sucesso!',
+					'msg'    => 'Você reagendou seu serviço para o dia ' . date('d/m/Y', strtotime($columns['data'])) . '. Por favor, aguarde a confirmação.',
+				);
+			}
+			echo json_encode($json);
 		}
-
-		//--------------------------------------------------------------------
 
 	}
 

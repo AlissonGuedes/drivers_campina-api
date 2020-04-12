@@ -22,6 +22,7 @@ namespace App\Controllers
 					$data[] = array(
 						'id' => $row -> id,
 						'nome' => $row -> categoria,
+						'categoria' => $row -> slug,
 						'imagem' => $row -> imagem
 					);
 				}

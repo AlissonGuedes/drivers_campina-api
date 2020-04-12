@@ -30,7 +30,7 @@ namespace App\Models
 		 *
 		 * @var string
 		 */
-		protected $returnType = 'App\Entities\Plano';
+		protected $returnType; // = 'App\Entities\Plano';
 
 		/**
 		 * Especificar por quais colunas da tabela
@@ -38,7 +38,7 @@ namespace App\Models
 		 *
 		 * @var array
 		 */
-		private $order = array(
+		protected $order = array(
 			NULL,
 			'id',
 			'nome',
@@ -220,123 +220,6 @@ namespace App\Models
 
 			return FALSE;
 
-		}
-
-		//--------------------------------------------------------------------
-
-		/**
-		 * Cadastra novo registro na tabela
-		 *
-		 * @return boolean		true	Caso o registro seja cadastrado normalmente
-		 * 						false	Caso haja algum erro ao cadastrar
-		 */
-		public function create()
-		{
-
-			$post = $this -> request -> getPost();
-
-			if ( $this -> validate($post) === FALSE )
-				return FALSE;
-
-			$plano = new \App\Entities\User;
-			$plano -> fill($post);
-
-			$this -> insert($plano);
-
-			if ( $this -> affectedRows() )
-				return true;
-			else
-				return false;
-
-		}
-
-		//--------------------------------------------------------------------
-
-		/**
-		 * Editar registros na tabela
-		 *
-		 * @return boolean		true	Caso o registro seja editado normalmente
-		 * 						false	Caso haja algum erro ao remover
-		 *
-		 *   // Defined as a model property
-		 *   $primaryKey = 'id';
-		 *
-		 *   // Does an insert()
-		 *   $data = [
-		 *           'username' => 'darth',
-		 *           'email'    => 'd.vader@theempire.com'
-		 *   ];
-		 *
-		 *   $userModel->save($data);
-		 *
-		 *   // Performs an update, since the primary key, 'id', is found.
-		 *   $data = [
-		 *           'id'       => 3,
-		 *           'username' => 'darth',
-		 *           'email'    => 'd.vader@theempire.com'
-		 *   ];
-		 *
-		 *   $userModel->save($data);
-		 *   $data = [
-		 *        'username' => 'darth',
-		 *        'email'    => 'd.vader@theempire.com'
-		 *    ];
-		 *
-		 *    $userModel->update($id, $data);
-		 *    $data = [
-		 *        'active' => 1
-		 *    ];
-		 *    $userModel->update([1, 2, 3], $data);
-		 *
-		 *    $userModel
-		 *        ->whereIn('id', [1,2,3])
-		 *        ->set(['active' => 1]
-		 *        ->update();
-		 *
-		 */
-		public function edit()
-		{
-
-			$post = getPut();
-
-			if ( $this -> validate($post) === FALSE )
-				return FALSE;
-
-			$plano = new \App\Entities\User;
-			$plano -> fill($post);
-
-			$this -> update(['id' => $post['id']], $plano);
-
-			if ( $this -> affectedRows() )
-				return true;
-			else
-				return false;
-
-		}
-
-		//--------------------------------------------------------------------
-
-		/**
-		 * Remove registros na tabela
-		 *
-		 * @return boolean		true	Caso o registro seja excluído normalmente
-		 * 						false	Caso haja algum erro ao remover
-		 */
-		public function remove()
-		{
-
-			$post = getDelete();
-
-			if ( $this -> validate($post) === FALSE )
-				return FALSE;
-
-			$fields = $post['fields'];
-			$this -> delete($fields);
-
-			if ( $this -> affectedRows() )
-				return true;
-			else
-				return false;
 		}
 
 		//--------------------------------------------------------------------

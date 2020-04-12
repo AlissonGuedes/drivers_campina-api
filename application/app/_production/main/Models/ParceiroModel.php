@@ -30,7 +30,7 @@ namespace App\Models
 		 *
 		 * @var string
 		 */
-		protected $returnType = 'App\Entities\Faq';
+		protected $returnType; // = 'App\Entities\Parceiro';
 
 		/**
 		 * Especificar por quais colunas da tabela
@@ -38,7 +38,7 @@ namespace App\Models
 		 *
 		 * @var array
 		 */
-		private $order = array(
+		protected $order = array(
 			NULL,
 			'B.id',
 			'B.descricao',
@@ -125,9 +125,10 @@ namespace App\Models
 			$tipo = $this -> uri -> getSegment(2);
 			return $this -> select('P.*, C.categoria')
 						 -> from('tb_parceiro AS P,tb_categoria AS C', true)
+						 -> where('P.id_categoria = C.id')
 						 -> where('P.status', '1')
 						 -> where('C.status', '1')
-						 -> where('P.id_categoria', $tipo)
+						 -> where('C.slug', $tipo)
 						 -> orderBy('nome');
 		}
 
@@ -135,212 +136,6 @@ namespace App\Models
 		{
 			$parceiro = $this -> uri -> getSegment(2);
 			return $this -> select('*') -> from('tb_servico', true) -> where('id_parceiro', $parceiro);
-		}
-
-		/**
-		 * Lista registros da tabela
-		 *
-		 * @param string|array|boolean		$where
-		 * @param string|array				$fields
-		 *
-		 * @return array Model()
-		 */
-		public function getFaq($where = false, $fields = '*')
-		{
-			// Select '*'
-			$this -> select($fields);
-
-			// Where
-			if ( $where )
-				$this -> where($where);
-				
-			$this -> where('status', '1');
-
-			/*
-			 * Adicionar outras condições...
-			 */
-
-			// Like
-			if ( ! empty($_POST['search']['value']) )
-			{
-
-				$or_like = array(
-					'B.id' => $_POST['search']['value'],
-					'B.descricao' => $_POST['search']['value'],
-				);
-
-				$this -> orLike($or_like);
-
-			}
-
-			// Order By
-			if ( ! empty($_POST['order']) )
-			{
-				$orderBy = $this -> order[$_POST['order'][0]['column']];
-				$direction = $_POST['order'][0]['dir'];
-			}
-			else
-			{
-				$orderBy = $this -> order[1];
-				$direction = 'desc';
-			}
-
-			$this -> orderBy($orderBy, $direction);
-
-			// Limit
-			$limit = isset($_POST['length']) ? $_POST['length'] : NULL;
-
-			if ( ! is_null($limit) )
-				$this -> limit($limit);
-
-			// Offset
-			$start = isset($_POST['start']) ? $_POST['start'] : NULL;
-
-			if ( ! is_null($start) )
-				$this -> offset($start);
-
-			return $this;
-
-		}
-
-		//--------------------------------------------------------------------
-
-		/**
-		 * Cadastra novo registro na tabela
-		 *
-		 * @return boolean		true	Caso o registro seja cadastrado normalmente
-		 * 						false	Caso haja algum erro ao cadastrar
-		 */
-		public function getFaqByCity($where = false, $fields = '*')
-		{
-
-			$fields = [
-			'C.id',
-			'C.cidade'];
-
-			$this -> getFaq($where, $fields);
-
-			$this -> distinct(true);
-
-			$this -> join('tb_cidade C', 'C.id = B.id_cidade', 'left');
-
-			return $this;
-
-		}
-
-		//--------------------------------------------------------------------
-
-		/**
-		 * Cadastra novo registro na tabela
-		 *
-		 * @return boolean		true	Caso o registro seja cadastrado normalmente
-		 * 						false	Caso haja algum erro ao cadastrar
-		 */
-		public function create()
-		{
-
-			$post = $this -> request -> getPost();
-
-			if ( $this -> validate($post) === FALSE )
-				return FALSE;
-
-			$this -> faq -> fill($post);
-
-			$this -> insert($this -> faq);
-
-			if ( $this -> affectedRows() )
-				return true;
-			else
-				return false;
-
-		}
-
-		//--------------------------------------------------------------------
-
-		/**
-		 * Editar registros na tabela
-		 *
-		 * @return boolean		true	Caso o registro seja editado normalmente
-		 * 						false	Caso haja algum erro ao remover
-		 *
-		 *   // Defined as a model property
-		 *   $primaryKey = 'id';
-		 *
-		 *   // Does an insert()
-		 *   $data = [
-		 *           'username' => 'darth',
-		 *           'email'    => 'd.vader@theempire.com'
-		 *   ];
-		 *
-		 *   $userModel->save($data);
-		 *
-		 *   // Performs an update, since the primary key, 'id', is found.
-		 *   $data = [
-		 *           'id'       => 3,
-		 *           'username' => 'darth',
-		 *           'email'    => 'd.vader@theempire.com'
-		 *   ];
-		 *   $userModel->save($data);
-		 *
-		 *   $data = [
-		 *        'username' => 'darth',
-		 *        'email'    => 'd.vader@theempire.com'
-		 *    ];
-		 *
-		 *    $userModel->update($id, $data);
-		 *    $data = [
-		 *        'active' => 1
-		 *    ];
-		 *    $userModel->update([1, 2, 3], $data);
-		 *
-		 *    $userModel
-		 *        ->whereIn('id', [1,2,3])
-		 *        ->set(['active' => 1]
-		 *        ->update();
-		 *
-		 */
-		public function edit()
-		{
-
-			$post = getPut();
-
-			if ( $this -> validate($post) === FALSE )
-				return FALSE;
-
-			$this -> faq -> fill($post);
-
-			$this -> update(['id' => $post['id']], $this -> faq);
-
-			if ( $this -> affectedRows() )
-				return true;
-			else
-				return false;
-
-		}
-
-		//--------------------------------------------------------------------
-
-		/**
-		 * Remove registros na tabela
-		 *
-		 * @return boolean		true	Caso o registro seja excluído normalmente
-		 * 						false	Caso haja algum erro ao remover
-		 */
-		public function remove()
-		{
-
-			$post = getDelete();
-
-			if ( $this -> validate($post) === FALSE )
-				return FALSE;
-
-			$fields = $post['fields'];
-			$this -> delete($fields);
-
-			if ( $this -> affectedRows() )
-				return true;
-			else
-				return false;
 		}
 
 		//--------------------------------------------------------------------

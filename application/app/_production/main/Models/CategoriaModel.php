@@ -30,7 +30,7 @@ namespace App\Models
 		 *
 		 * @var string
 		 */
-		protected $returnType = 'App\Entities\Categoria';
+		protected $returnType; // = 'App\Entities\Categoria';
 
 		/**
 		 * Especificar por quais colunas da tabela
@@ -38,7 +38,7 @@ namespace App\Models
 		 *
 		 * @var array
 		 */
-		private $order = array(
+		protected $order = array(
 		);
 
 		/**
@@ -71,7 +71,7 @@ namespace App\Models
 		//--------------------------------------------------------------------
 
 		public function getCategoria(){
-			return $this -> select('*')
+			return $this -> select('id, categoria, slug, imagem')
 						 -> from('tb_categoria', true)
 						 -> where('status', '1')
 						 -> orderBy('categoria');

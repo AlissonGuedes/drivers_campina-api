@@ -50,20 +50,11 @@ namespace App\Controllers
 		public function agendar(){
 			$data = [];
 			$servico = $this -> servico_model -> agendarServico();
+		}
 
-			if ( $servico ) {
-				$data = array(
-					'status'=>'success',
-					'msg' => 'Agendamento realizado com sucesso!<br>Por favor, aguarde confirmação.'
-				);
-			} else {
-				$data = array(
-					'status'=>'error',
-					'msg' => 'Não foi possível realizar o agendamento.'
-				);
-			}
-
-			echo json_encode($data);
+		public function reagendar(){
+			$data = [];
+			$servico = $this -> servico_model -> reagendarServico();
 		}
 
 		public function categorias()
@@ -104,7 +95,6 @@ namespace App\Controllers
 						'descricao' => $row -> descricao,
 						'valor' => number_format($row -> valor, 2, ',', '.'),
 						'imagem' => $row -> imagem
-						// id, id_categoria AS categoria, id_servico AS servico, descricao, valor, imagem
 					);
 				}
 			}
