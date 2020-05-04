@@ -1,498 +1,282 @@
-/* Webarch Admin Dashboard
- /* This JS is only for DEMO Purposes - Extract the code that you need
- -----------------------------------------------------------------*/
-if($.fn.dataTable)
-{
+/**
+ * @class	DataTable
+ * @author	Alisson Guedes
+ * @date	28/04/2020
+ * @comment	Funções para organizar tabelas html5.
+ */
 
-	/* Set the defaults for DataTables initialisation */
-	$.extend(true, $.fn.dataTable.defaults,
-	{
-		"sDom" : "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'p i>>",
-		"sPaginationType" : "materialize",
-		"oLanguage" :
-		{
-			"sLengthMenu" : "_MENU_"
-		}
-	});
+'use strict'
 
-	/* Default class modification */
-	$.extend($.fn.dataTableExt.oStdClasses,
-	{
-		"sWrapper" : "dataTables_wrapper form-inline"
-	});
+var __self;
 
-	/* API method to get paging information */
-	$.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings)
-	{
-		oSettings =
-		{
-			"iStart" : oSettings._iDisplayStart,
-			"iEnd" : oSettings.fnDisplayEnd(),
-			"iLength" : oSettings._iDisplayLength,
-			"iTotal" : oSettings.fnRecordsTotal(),
-			"iFilteredTotal" : oSettings.fnRecordsDisplay(),
-			"iPage" : oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
-			"iTotalPages" : oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
-		};
+var DataTable = {
 
-		return oSettings;
-	};
+    init: () => {
 
-	/* Materialize style pagination control */
-	$.extend($.fn.dataTableExt.oPagination,
-	{
-		"materialize" :
-		{
-			"fnInit" : function(oSettings, nPaging, fnDraw)
-			{
-				var oLang = oSettings.oLanguage.oPaginate;
-				var fnClickHandler = function(e)
-				{
-					e.preventDefault();
-					if(oSettings.oApi._fnPageChange(oSettings, e.data.action))
-					{
-						fnDraw(oSettings);
-					}
-				};
+        __self = DataTable;
+        var col = window.location.href.split('/').slice(-2);
 
-				$(nPaging).addClass('pagination').append('<ul>' + '<li class="prev disabled"><a href="#"><i class="material-icons">keyboard_arrow_left</i></a></li>' + '<li class="next disabled"><a href="#"><i class="material-icons">keyboard_arrow_right</i></a></li>' + '</ul>');
-				var els = $('a', nPaging);
-				$(els[0]).bind('click.DT',
-				{
-					action : "previous"
-				}, fnClickHandler);
-				$(els[1]).bind('click.DT',
-				{
-					action : "next"
-				}, fnClickHandler);
-			},
+        $('body').find('.table').each(function() {
 
-			"fnUpdate" : function(oSettings, fnDraw)
-			{
-				var iListLength = 5;
-				var oPaging = oSettings.oInstance.fnPagingInfo();
-				var an = oSettings.aanFeatures.p;
-				var i,
-				    ien,
-				    j,
-				    sClass,
-				    iStart,
-				    iEnd,
-				    iHalf = Math.floor(iListLength / 2);
+            $(this).find('.table-header').find('.table-col').each(function() {
 
-				if(oPaging.iTotalPages < iListLength)
-				{
-					iStart = 1;
-					iEnd = oPaging.iTotalPages;
-				}
-				else if(oPaging.iPage <= iHalf)
-				{
-					iStart = 1;
-					iEnd = iListLength;
-				}
-				else if(oPaging.iPage >= (oPaging.iTotalPages - iHalf))
-				{
-					iStart = oPaging.iTotalPages - iListLength + 1;
-					iEnd = oPaging.iTotalPages;
-				}
-				else
-				{
-					iStart = oPaging.iPage - iHalf + 1;
-					iEnd = iStart + iListLength - 1;
-				}
+                if (typeof $(this).data('orderable') === 'undefined' || $(this).data('orderable'))
+                    $(this).addClass('sort');
 
-				for ( i = 0,
-				ien = an.length; i < ien; i ++ )
-				{
-					// Remove the middle elements
-					$('li:gt(0)', an[i]).filter(':not(:last)').remove();
+                if (col[0] === $(this).text().trim().toLowerCase()) {
+                    $(this).parents('.table').find('.table-header').find('.table-col').removeClass('asc desc')
+                    $(this).addClass(col[1]);
+                }
 
-					// Add the new list items and their event handlers
-					for ( j = iStart; j <= iEnd; j ++ )
-					{
-						sClass = (j == oPaging.iPage + 1) ? 'class="active"' : '';
-						$('<li ' + sClass + '><a href="#">' + j + '</a></li>').insertBefore($('li:last', an[i])[0]).bind('click', function(e)
-						{
-							e.preventDefault();
-							oSettings._iDisplayStart = (parseInt($('a', this).text(), 10) - 1) * oPaging.iLength;
-							fnDraw(oSettings);
-						});
-					}
+            })
 
-					// Add / remove disabled classes from the static elements
-					if(oPaging.iPage === 0)
-					{
-						$('li:first', an[i]).addClass('disabled');
-					}
-					else
-					{
-						$('li:first', an[i]).removeClass('disabled');
-					}
+        })
 
-					if(oPaging.iPage === oPaging.iTotalPages - 1 || oPaging.iTotalPages === 0)
-					{
-						$('li:last', an[i]).addClass('disabled');
-					}
-					else
-					{
-						$('li:last', an[i]).removeClass('disabled');
-					}
-				}
-			}
+        __self.Search();
+        __self.Ordernar();
+        __self.Checkbox();
+        __self.Categoria();
+        __self.Adicionar();
 
-		}
-	});
+    },
 
-	/*
-	* TableTools Materialize compatibility Required TableTools 2.1+
-	*/
+    ajax: ($url = '', $params = '') => {
 
-	// // Set the classes that TableTools uses to something suitable for Materialize
-	// $.extend(true, $.fn.DataTable.TableTools.classes,
-	// {
-	// "container" : "DTTT ",
-	// "buttons" :
-	// {
-	// "normal" : "btn btn-white",
-	// "disabled" : "disabled"
-	// },
-	// "collection" :
-	// {
-	// "container" : "DTTT_dropdown dropdown-menu",
-	// "buttons" :
-	// {
-	// "normal" : "",
-	// "disabled" : "disabled"
-	// }
-	// },
-	// "print" :
-	// {
-	// "info" : "DTTT_print_info modal"
-	// },
-	// "select" :
-	// {
-	// "row" : "active"
-	// }
-	// });
+        let $base_url = $('.table').data('url') + $url;
 
-	// // Have the collection use a materialize compatible dropdown
-	// $.extend(true, $.fn.DataTable.TableTools.DEFAULTS.oTags,
-	// {
-	// "collection" :
-	// {
-	// "container" : "ul",
-	// "button" : "li",
-	// "liner" : "a"
-	// }
-	// });
+        $url = $base_url + '/' + $params;
 
-	if($.fn.seletct2)
-	{
-		$(".select2-wrapper").select2(
-		{
-			minimumResultsForSearch : -1
-		});
-	}
+        $.ajax({
+            'type': 'get',
+            'url': $url,
+            'success': (data) => {
+                var tbody = data;
+                window.history.pushState('', '', $url);
+                $('.table').find('.table-body').html($(tbody).find('.table-body').html());
+                __self.Checkbox();
+            }
+        });
 
-	/* Formating function for row details */
-	function fnFormatDetails(oTable, nTr)
-	{
-		var aData = oTable.fnGetData(nTr);
-		var sOut = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;" class="inner-table">';
-		sOut += '<tr><td>Rendering engine:</td><td>' + aData[1] + ' ' + aData[4] + '</td></tr>';
-		sOut += '<tr><td>Link to source:</td><td>Could provide a link here</td></tr>';
-		sOut += '<tr><td>Extra info:</td><td>And any further details here (images etc)</td></tr>';
-		sOut += '</table>';
 
-		return sOut;
-	}
+    },
 
-	/**
-	 * Funções para atualizar tabelas no html
-	 *
-	 * @param {Object}
-	 *            url
-	 * @param {Object}
-	 *            params : Parâmetros opcionais enviados em formato POST para serem
-	 *            tratados no lado do servidor
-	 * @method {make_datatable}
-	 */
-	function make_datatable(url, params)
-	{
+    Search: () => {
 
-		// Adiciona plugin datatable ao elemento Table do HTML
-		var tabela = $('.datatable').DataTable();
+        $('.search').find('input[type="search"]').keyup(delay(function(e) {
 
-		tabela.destroy();
+            var $search = $(this).val();
+            let $sort;
+            let $column;
+            let $url;
+            let $params = '';
 
-		$.fn.dataTable.ext.errMode = '';
+            let $column_sort = $('.table').find('.table-header').find('.table-col');
+            $('.table').find('.table-header').find('.table-col.checkbox').find(':checkbox#check-all').prop('checked', false).change();
 
-		// Variável {$data} para enviar com parâmetros $_POST
-		$data = [];
+            if ($column_sort.hasClass('asc')) {
+                $column = $('.asc').text().toLowerCase().trim();
+                $sort = 'asc';
+            } else if ($column_sort.hasClass('desc')) {
+                $column = $('.desc').text().toLowerCase().trim();
+                $sort = 'desc';
+            }
 
-		// Variável vazia {items} = array()
-		var items = [];
+            if ($search !== '') {
+                $url = '/filtro';
+                $params = $search + '/';
+            }
 
-		// Variável estática {action} = array() que será enviada com tipo $_POST para
-		// o controller definindo uma ação a ser executada
-		var action =
-		{
-			'action' : 'listar'
-		};
+            __self.ajax($url, $params + $column + '/' + $sort);
 
-		// Combina a variável {$post} + os parâmetros recebido na função {params}
-		items.push(action, params);
+        }, 300));
 
-		// percorre o array {items} convertendo vários arrays
-		$.each(items, function(ind, val)
-		{
-			for ( var i in val )
-			{
-				action[i] = val[i];
-			}
-		});
+    },
 
-		$('.datatable').each(function()
-		{
+    Ordernar: () => {
 
-			var self = $(this);
-			var columns_clickable = [];
+        $('body').find('.table').find('.table-header .table-col').on('click', function() {
 
-			// Bloquear eventos de click às colunas que não tiverem atributo clickable=true
-			$(self).find('th').each(function(i)
-			{
+            if ($(this).data('orderable') === false)
+                return;
 
-				var clickable = $(this).data('clickable');
+            let $search = $('.search').find('input[type="search"]').val();
+            let $filtro = '';
+            let $sort;
+            let $column;
+            let $params = '';
 
-				if( typeof clickable !== 'undefined' && clickable !== '' && clickable === false)
-				{
-					columns_clickable.push(i);
-					$(this).attr('data-clickable', clickable);
-				}
-				else
-					$(this).attr('data-clickable', true);
+            $column = $(this).text().toLowerCase().trim();
 
-			});
+            if ($(this).hasClass('asc')) {
+                $(this).parent().find('.sort').removeClass('asc desc');
+                $(this).addClass('desc');
+                $sort = 'desc';
+            } else {
+                $(this).parent().find('.sort').removeClass('asc desc');
+                $(this).addClass('asc');
+                $sort = 'asc';
+            }
 
-			var table = self.DataTable(
-			{
-				// 'sDom' : '<"row"<"col-md-6"l T><"col-md-6"f>r>t<"row"<"col-md-12"p i>>',
-				// 'tabelaTools' :
-				// {
-				// 		'aButtons' :
-				//		[
-				// 			{
-				//				'sExtends' : 'collection',
-				//				'sButtonText' : '<i class="fa fa-cloud-download"></i>',
-				//				'aButtons' : ['csv', 'xls', 'pdf', 'copy']
-				// 			}
-				// 		]
-				// },
-				// 'responsive' : true,
-				responsive : !1,
-				scrollY : ( ! ! $(this).hasClass('responsive-table') ? '50vh' : !0),
-				scrollCollapse : ! !$(this).hasClass('responsive-table'),
-				paging : 1,
-				'oLanguage' :
-				{
-					'sEmptyTable' : 'Nenhum registro encontrado',
-					'sInfo' : '_START_-_END_ de _TOTAL_',
-					'sInfoEmpty' : 'Nenhum registro encontrado',
-					'sInfoFiltered' : '', //'(Filtrados de _MAX_ registros)',
-					'sInfoPostFix' : '',
-					'sInfoThousands' : '.',
-					// 'sLengthMenu' : '_MENU_',
-					'sLengthMenu' : '',
-					'sLoadingRecords' : 'Carregando...',
-					'sProcessing' : '<i></i> &nbsp; Carregando...',
-					'sZeroRecords' : 'Nenhum registro encontrado',
-					'sSearch' : ( typeof self.data('label') !== 'undefined' && self.data('label') ? self.data('label') : ''),
-					'sSearchPlaceholder' : ( typeof self.data('placeholder') !== 'undefined' && self.data('placeholder') ? self.data('placeholder') : null),
-					'oPaginate' :
-					{
-						'sNext' : 'Próximo',
-						'sPrevious' : 'Anterior',
-						'sFirst' : 'Primeiro',
-						'sLast' : 'Último'
-					},
-					'oAria' :
-					{
-						'sSortAscending' : ': Ordenar colunas de forma ascendente',
-						'sSortDescending' : ': Ordenar colunas de forma descendente'
-					}
-				},
-				'processing' : true,
-				'serverSide' : true,
-				'order' : [],
-				'displayLength' : 50,
-				'ajax' :
-				{
-					type : 'post',
-					url : url,
-					data : action
-				},
-				"fnDrawCallback" : function()
-				{
-					if( typeof load_plugins === 'function')
-						load_plugins();
+            if ($search !== '')
+                $filtro = 'filtro/' + $search + '/';
 
-					/**
-					 * As divs acima da div.dataTables_wrapper.form-inline estão sendo ocultadas pelo
-					 * JavaScript, onde não consegui identificar o código que a oculta.
-					 * Adicionei esta linha para esse resolver este problema
-					 */
-					$(this).parent().parent().parent().parent().show();
+            $params = $filtro + $column + '/' + $sort;
 
-				},
-				'fnRowCallback' : function(nRow, aData, iDisplayIndex, iDisplayIndexFull)
-				{
+            __self.ajax('', $params);
 
-					var data_toggle = $(this).data('toggle');
-					var data_target = $(this).attr('id');
+        });
 
-					$(nRow).each(function()
-					{
+    },
 
-						$(this).find('td').each(function()
-						{
-							var clickable = $(this).find('[data-clickable]').data('clickable');
-							if( typeof clickable !== 'undefined' && clickable !== '')
-								$(this).attr('data-clickable', clickable);
-							else
-								$(this).attr('data-clickable', true);
-						});
+    Checkbox: () => {
 
-						$(this).find('td').on('click', function()
-						{
+        if ($('.table .table-body .table-row').find('.checkbox :checkbox').length === 0)
+            $('.table .table-header').find('.checkbox :checkbox').attr('disabled', true);
+        else
+            $('.table .table-header').find('.checkbox :checkbox').attr('disabled', false);
 
-							if($(this).data('clickable'))
-							{
+        $('.table .table-body .table-row').find('.checkbox').find('label').on('click', function() {
+            $(this).parent().find(':checkbox').toggle();
+        })
 
-								if(data_toggle === 'modal')
-								{
-									$(this).addClass('modal-trigger');
-									$(this).attr('data-target', 'modal-' + data_target);
-								}
+        $('.table .table-header .table-row').find('.checkbox :checkbox').on('change', function() {
 
-								var id = $(aData[0]).find(':input').attr('value');
-								var href = window.location.href.split('?')[0] + '/' + id;
-								var acao = 'editar';
+            if ($(this).is(':checked')) {
+                $(this).parents('.table').find('.table-body').find('.checkbox :checkbox').prop('checked', true).change();
+            } else {
+                $(this).parents('.table').find('.table-body').find('.checkbox :checkbox').prop('checked', false).change();
+            }
 
-								if(data_toggle === 'modal')
-								{
+            __self.CheckboxState();
 
-									var name = $(this).parents('.datatable').attr('id');
-									var title = $(this).parents('.datatable').attr('data-title');
-									var datatype = $(this).parents('.datatable').attr('data-type');
+        })
 
-									var params =
-									{
-										'name' : name,
-										'acao' : acao,
-										'href' : href,
-										'title' : title,
-										'datatype' : datatype
-									};
+        $('.table .table-body .table-row').find('.checkbox :checkbox').on('change', function() {
 
-									modal_editor(params, true);
+            $(this).prop('checked');
 
-								}// End if
-								else
-								{
+            if ($(this).is(':checked')) {
 
-									$.ajax(
-									{
-										type : 'post',
-										url : href,
-										dataType : 'json',
-										data :
-										{
-											'id' : id,
-											'acao' : acao
-										},
-										success : function(data)
-										{
-											var uri = new URI();
-											if(uri.Request(href))
-											{
-												history.pushState('teste', 'tete2', href);
-											}
-										},
-										error : function()
-										{
-										}
+                if (!$(this).parent().find('i').is(':visible')) {
+                    animate($(this).parent().find('i').show(), 'fadeIn fast', function(e) {
+                        e.show();
+                    });
+                }
 
-									});
-									// End click event
+            } else {
+                animate($(this).parent().find('i'), 'fadeOut fast', function(e) {
+                    e.hide();
+                });
+            }
 
-								} // End else
+            __self.CheckboxState();
 
-							}
+        });
 
-						});
+    },
 
-					});
-					// end Each
+    CheckboxState: () => {
 
-				},
-				'sPaginationType' : 'materialize',
-				'columnDefs' : [
-				{
-					'bSortable' : false,
-					'aTargets' : columns_clickable,
-					'ordareble' : false,
-				},
-				{
-					'className' : ['not-clickable'],
-					// 'targets' : [0]
-				}
-				// {
-				// 		"targets" : [3],
-				// 		"visible" : true,
-				// 		"searchable" : true
-				// },
-				// {
-				//		"targets" : ($('.datatable').attr('id') === 'emails') ? [4] : [],
-				//		"visible" : false
-				// }
-				],
-				// 'aaSorting' : [[0, 'asc']],
-				'bAutoWidth' : true,
-			});
+        var countCheckbox = $('.table .table-body :input:checkbox.trash').length;
+        var countCheckeds = $('.table .table-body :input:checkbox.trash:checked').length;
+        var indeterminate = document.getElementById('check-all');
+        var buttonsAction = $('.table .table-header .table-actions');
 
-		});
+        if (countCheckeds > 0) {
 
-	};
+            $('button.btn-trash').attr('disabled', false);
+
+            if (countCheckeds === countCheckbox) {
+
+                indeterminate.indeterminate = false;
+
+            } else if (countCheckeds < countCheckbox) {
+
+                if (typeof indeterminate !== 'undefined' && indeterminate !== null)
+                    indeterminate.indeterminate = true;
+            }
+
+            $('.table .table-header .checkbox :checkbox').prop('checked', true);
+            $('.table .table-header .table-actions ~ .table-col').css({ 'z-index': '-1', 'position': 'relative' });
+            buttonsAction.removeClass('animated fadeIn fadeOut fast').addClass('animated fadeIn fast').css({
+                'opacity': '1',
+                'display': 'flex'
+            });
+
+        } else {
+
+            $('button.btn-trash').attr('disabled', true);
+            $('.table .checkbox :checkbox:checked').prop('checked', false);
+            buttonsAction.removeClass('animated fadeIn fadeOut fast').addClass('animated fadeOut').css({
+                'opacity': '0',
+                'display': 'none'
+            });
+
+            if (typeof indeterminate !== 'undefined' && indeterminate !== null)
+                indeterminate.indeterminate = false;
+            $('.table .table-header .table-actions ~ .table-col').css({ 'z-index': '1', 'position': 'relative' });
+
+        }
+
+    },
+
+    Categoria: () => {
+
+        $('#listar-categorias').find('li a').on('click', function() {
+
+            let $href;
+            let $url = $('.table').data('url');
+            $href = $(this).attr('href').split('#').splice(1).toString();
+
+            let $search = $('.search').find('input[type="search"]').val();
+            let $filtro = '';
+            let $sort;
+            let $column;
+            let $params = '';
+
+            if ($('#page-form').is(':visible')) {
+                $('#back-list').click();
+            }
+
+
+            if ($('.table .table-header').find('.table-col').hasClass('asc')) {
+                $column = $('.table .table-header').find('.table-col.asc').text().toLowerCase().trim();
+                $sort = 'asc';
+            } else if ($('.table .table-header').find('.table-col').hasClass('desc')) {
+                $column = $('.table .table-header').find('.table-col.desc').text().toLowerCase().trim();
+                $sort = 'desc';
+            }
+
+            if ($search !== '')
+                $filtro = 'filtro/' + $search + '/';
+
+            $params = $filtro + $column + '/' + $sort;
+
+            $(this).parents('#listar-categorias').find('li a').removeClass('active');
+            $(this).addClass('active');
+
+            __self.ajax('/' + $href, $params);
+
+        });
+    },
+
+    Adicionar: () => {
+
+        $('#adicionar').on('click', function() {
+            $('#page-list').hide();
+            $('#page-form').show();
+            $('#page-form').find('*').attr('disabled', false);
+            $('#adicionar').attr('disabled', true);
+            $('input[type="text"]')[0].focus();
+        })
+
+        $('#back-list').on('click', function() {
+            $('#page-list').show();
+            $('#page-form').hide();
+            $('#page-form').find('*').attr('disabled', true);
+            $('#adicionar').attr('disabled', false);
+        })
+
+    }
 
 }
-
-function load_datatable()
-{
-
-	// listar no range de data do filtro
-	var filtro = $('[data-toggle="daterangepicker"]').find('.data');
-	var data = typeof filtro !== 'undefined' ? filtro.text().replace(/\ /, '').replace(/\ /, '') : null;
-	var daterange = data !== null ?
-	{
-		'periodo' : data
-	} : null;
-	var params =
-	{
-		filter : daterange
-	};
-
-	$('.datatable').each(function()
-	{
-
-		if( typeof $(this).attr('data-request') !== 'undefined')
-			if($(this).attr('data-request') == 'false')
-				return false;
-
-		url = typeof $(this).attr('data-url') !== 'undefined' ? $(this).attr('data-url') : window.location.href + '/index';
-
-		make_datatable(url, params);
-
-	});
-
-}
-

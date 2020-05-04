@@ -32,12 +32,16 @@ class Database extends \CodeIgniter\Database\Config
 	public $default = [
 		'DSN'      => '',
 		'hostname' => 'localhost',
-		'database' => 'pjmtelec_prod',
-		'username' => 'pjmtelec_pjm',
-    	'password' => 'KYO74{Rpb5VJ',
+		// 'database' => 'drivers_campina',
+		// 'username' => 'drivers_campina',
+		// 'password' => 'KYO74{Rpb5VJ',
+		// 'hostname' => 'driverscampina.com.br',
+		'database' => 'driversc_app',
+		'username' => 'driversc_api',
+		'password' => '$oH#RwlwDHAf',
 		'DBDriver' => 'MySQLi',
 		'DBPrefix' => '',
-		'pConnect' => true,
+		'pConnect' => false,
 		'DBDebug'  => (ENVIRONMENT !== 'production'),
     	'cacheOn'  => true,
 		'cacheDir' => '',
@@ -60,12 +64,16 @@ class Database extends \CodeIgniter\Database\Config
 	public $tests = [
 		'DSN'      => '',
 		'hostname' => 'localhost',
-		'database' => 'pjmtelec_teste',
-		'username' => 'pjmtelec_pjm',
-    	'password' => 'KYO74{Rpb5VJ',
+		// 'database' => 'drivers_campina',
+		// 'username' => 'drivers_campina',
+    	// 'password' => 'KYO74{Rpb5VJ',
+		// 'hostname' => 'driverscampina.com.br',
+		'database' => 'driversc_app',
+		'username' => 'driversc_api',
+		'password' => '$oH#RwlwDHAf',
 		'DBDriver' => 'MySQLi',
 		'DBPrefix' => '',  // Needed to ensure we're working correctly with prefixes live. DO NOT REMOVE.
-		'pConnect' => true,
+		'pConnect' => false,
 		'DBDebug'  => (ENVIRONMENT !== 'production'),
 		'cacheOn'  => true,
 		'cacheDir' => '',
@@ -115,3 +123,4 @@ class Database extends \CodeIgniter\Database\Config
 	//--------------------------------------------------------------------
 
 }
+

@@ -1,19 +1,14 @@
 'use strict';
 
-function debounce(func, wait, immediate) {
-
-    var timeout;
-    return function (args) {
-        const context = this;
-        const later = function () {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        };
-
-        const callnow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callnow) func.apply(context, args);
+function delay(callback, ms) {
+    var timer = 0;
+    return function() {
+        var context = this,
+            args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function() {
+            callback.apply(context, args);
+        }, ms || 200);
     }
 }
 
@@ -29,7 +24,7 @@ function fixar_menu() {
 
         menu.addClass('ha-header-hide');
 
-        $(document).on('scroll', function () {
+        $(document).on('scroll', function() {
 
             if ($(window).scrollTop() > 0)
                 menu.removeClass('ha-header-hide');
@@ -49,7 +44,7 @@ function preloader(type, reload) {
 
     $('.material-tooltip').remove();
 
-    $('form').each(function () {
+    $('form').each(function() {
         $(this).find('input[type="text"]').attr('autocapitalize', 'words');
     });
 
@@ -99,7 +94,7 @@ function postForm() {
 
     var items = ['.editor', '.redactor'];
 
-    $(items.toString()).each(function () {
+    $(items.toString()).each(function() {
 
         var html = $(this).children('.ql-editor').html();
         var textarea = '<textarea></textarea>';
@@ -130,7 +125,7 @@ function execute_data(data, form) {
     $(form).find('input:hidden[name="id"]').val(id);
     $(form).find('input:hidden[name="ultima_edicao"]').val(ultima_edicao);
 
-    $.each(data.fields, function (a, attribute) {
+    $.each(data.fields, function(a, attribute) {
 
         var element = attribute.element;
         var type = attribute.type;
@@ -168,15 +163,14 @@ function execute_data(data, form) {
             case 'select':
 
                 if (section.find(element + '[name=' + name + ']').find('option').length) {
-                    section.find(element + '[name=' + name + ']').find('option').each(function () {
+                    section.find(element + '[name=' + name + ']').find('option').each(function() {
                         if ($(this).val() !== '') {
                             if ($(this).val() == value) {
                                 $(this).parent(element + '[name=' + name + ']').val(value).trigger('change');
                             }
                         }
                     });
-                }
-                else {
+                } else {
 
                     section.find(element + '[name="' + name + '[]"]').find('option').remove();
                     var opt = value.split(',');
@@ -213,8 +207,7 @@ function execute_data(data, form) {
                         section.find(':checkbox[name=' + name + ']').attr('checked', true).iCheck('check');
                     else
                         section.find(':checkbox[name=' + name + ']').attr('checked', false).iCheck('uncheck');
-                }
-                else if (typeof $switch !== 'undefined' && $switch == 'switch') {
+                } else if (typeof $switch !== 'undefined' && $switch == 'switch') {
                     if (checked)
                         section.find(':checkbox[name=' + name + ']').attr('checked', true).prop('checked', true).change();
                     else
@@ -261,12 +254,10 @@ function execute_data(data, form) {
                 $('#' + id).val(value)
                 $('#' + id).text(value);
             }
-        }
-        else if (id == null && classe != null && value != null) {
+        } else if (id == null && classe != null && value != null) {
             $(classe).val(value).find('span').text(value);
             $(classe).text(value).removeClass('muted');
-        }
-        else
+        } else
             $(classe).val(value).find('span').addClass(classes_removidas).text(label);
 
         if (disabled)
@@ -300,15 +291,15 @@ function load_page(type, url) {
                 location.href = url;
             return this;
             break;
-        // se redirect for false, não fazer nada
+            // se redirect for false, não fazer nada
         case false:
             // $('.modal').modal('hide');
             $('.modal').modal('close');
             // console.log('teste');
             return this;
             break;
-        // esta condição, se existir uma URL, serve para atualizar as
-        // DataTables. Se a URL não existir, atualiza a página
+            // esta condição, se existir uma URL, serve para atualizar as
+            // DataTables. Se a URL não existir, atualiza a página
         case 'refresh':
 
             var $params = [];
@@ -330,15 +321,15 @@ function load_page(type, url) {
 
             // request_pag(location.pathname);
             break;
-        // esta condição redireciona para outra página após receber um
-        // retorno caso exista uma URL válida.
+            // esta condição redireciona para outra página após receber um
+            // retorno caso exista uma URL válida.
         case 'redirect':
-            console.log(url);
+            // console.log(url);
             $('.modal').modal('close');
             location.href = url;
             break;
-        // caso a variável redirect seja um valor indefinido ou reload,
-        // atualiza a página
+            // caso a variável redirect seja um valor indefinido ou reload,
+            // atualiza a página
         case 'reload':
             $('.modal').modal('close');
             location.reload();
@@ -360,29 +351,26 @@ function load_page(type, url) {
  * função para bloquear elementos (terminar de carregar)
  */
 function blockUI(el) {
-    $(el).block(
-        {
-            message: '<div class="loading-animator"></div>',
-            css:
-            {
-                border: 'none',
-                padding: '2px',
-                backgroundColor: 'none'
-            },
-            overlayCSS:
-            {
-                backgroundColor: '#fff',
-                opacity: 0.3,
-                cursor: 'wait'
-            }
-        });
+    $(el).block({
+        message: '<div class="loading-animator"></div>',
+        css: {
+            border: 'none',
+            padding: '2px',
+            backgroundColor: 'none'
+        },
+        overlayCSS: {
+            backgroundColor: '#fff',
+            opacity: 0.3,
+            cursor: 'wait'
+        }
+    });
 }
 
 /**
  * função para desbloquear elementos (terminar de carregar)
  */
 function unblockUI(el) {
-    setTimeout(function () {
+    setTimeout(function() {
         $(el).unblock();
     }, 1000);
 }
@@ -391,10 +379,10 @@ function unblockUI(el) {
  * Adiciona uma animação em uma barra de progresso
  */
 function animation_progress() {
-    $('.animate-number').each(function () {
+    $('.animate-number').each(function() {
         $(this).html(0).animateNumbers($(this).attr("data-value"), true, parseInt($(this).attr("data-animation-duration"), 10));
     });
-    $('.animate-progress-bar').each(function () {
+    $('.animate-progress-bar').each(function() {
         $(this).css('width', $(this).attr("data-percentage"));
     });
 }
@@ -402,7 +390,7 @@ function animation_progress() {
 /**
  * Função para exibir as mensagens de notificações no sistema:
  */
-var notificacao = function (data, form) {
+var notificacao = function(data, form) {
 
     countCheckState('none');
     var self = typeof form !== 'undefined' ? form : $('form');
@@ -428,24 +416,22 @@ var notificacao = function (data, form) {
 
                 $('#toast-container').find('.toast').remove();
 
-                M.toast(
-                    {
-                        html: msg + '<button class="btn btn-floating btn-small transparent toast-action waves-effect waves-light"><i class="material-icons blue-text text-lighten-1">close</i></button>',
-                        displayLength: 10000
-                    });
+                M.toast({
+                    html: msg + '<button class="btn btn-floating btn-small transparent toast-action waves-effect waves-light"><i class="material-icons blue-text text-lighten-1">close</i></button>',
+                    displayLength: 10000
+                });
 
-                $('.toast-action').on('click', function (e) {
+                $('.toast-action').on('click', function(e) {
                     e.preventDefault();
                     M.Toast.dismissAll();
                 });
 
             }
-        }
-        else if (typeof msg === 'array') {
+        } else if (typeof msg === 'array') {
 
 
             for (var i in msg) {
-                jQuery.each(msg[i], function (name, info) {
+                jQuery.each(msg[i], function(name, info) {
 
                     var error = '<span>' + info + '</span>';
 
@@ -457,9 +443,8 @@ var notificacao = function (data, form) {
                 });
             }
 
-        }
-        else if (typeof msg === 'object') {
-            jQuery.each(msg, function (name, info) {
+        } else if (typeof msg === 'object') {
+            jQuery.each(msg, function(name, info) {
 
                 var error = '<span>' + info + '</span>';
 
@@ -479,7 +464,7 @@ var notificacao = function (data, form) {
 
     var tab = /^\#tab\_$/;
 
-    self.find('div*[id]').each(function () {
+    self.find('div*[id]').each(function() {
         var reg = new RegExp(/^tab\_[a-z]+/);
         var id = typeof $(this).attr('id') !== 'undefined' ? $(this).attr('id') : null;
 
@@ -488,19 +473,17 @@ var notificacao = function (data, form) {
                 .removeClass('error pink lighten-4').find('i').remove();
             if ($(this).find('.error').length) {
                 var width = $('a[href="#' + id + '"]').parent().innerWidth();
-                $(this).parents(self).find('a[href="#' + id + '"]').css(
-                    {
+                $(this).parents(self).find('a[href="#' + id + '"]').css({
                         'position': 'relative',
                         'overflow': 'hidden'
                     })
-                    .addClass('error pink lighten-4').append($('<i/>').addClass('material-icons right').css(
-                        {
-                            'color': 'rgb(255, 64, 129)',
-                            'margin-top': '10px',
-                            'position': 'absolute',
-                            'right': 'calc(100% - ' + width + 'px)',
-                            'top': '0',
-                        }).text('error'));
+                    .addClass('error pink lighten-4').append($('<i/>').addClass('material-icons right').css({
+                        'color': 'rgb(255, 64, 129)',
+                        'margin-top': '10px',
+                        'position': 'absolute',
+                        'right': 'calc(100% - ' + width + 'px)',
+                        'top': '0',
+                    }).text('error'));
             } else {
                 $(this).parents(self).find('a[href="#' + id + '"]').removeClass('error pink lighten-4').find('i').remove();
             }
@@ -516,7 +499,7 @@ var notificacao = function (data, form) {
  * Função para substituir o alerta padrão do navegador.
  * @return {}
  */
-var Alerta = function (data, action, form) {
+var Alerta = function(data, action, form) {
 
     var title = data.title;
     var type = data.type;
@@ -543,49 +526,47 @@ var Alerta = function (data, action, form) {
 
         if (action == 'excluir' && willDelete) {
 
-            $.ajax(
-                {
-                    type: 'post',
-                    dataType: 'json',
-                    url: url,
-                    data:
-                    {
-                        id: fields,
-                        acao: action
-                    },
-                    success: function (data) {
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                url: url,
+                data: {
+                    id: fields,
+                    acao: action
+                },
+                success: function(data) {
 
-                        if (data.type === 'success') {
+                    if (data.type === 'success') {
 
-                            var count = 0;
-                            var i;
+                        var count = 0;
+                        var i;
 
-                            for (i = 0; i < data.fields.length; i++) {
-                                $('tr#' + data.fields[i]).remove();
-                            }
-
-                            countCheckState('none');
-
-                            setTimeout(function () {
-                                load_page(data);
-                                swal('Pedido cancelado!', {
-                                    icon: "success",
-                                });
-                            }, 200);
-
+                        for (i = 0; i < data.fields.length; i++) {
+                            $('tr#' + data.fields[i]).remove();
                         }
 
-                    },
-
-                    error: function (request, status, error) {
-                        alert((request.status !== 200 ? 'Houve um erro ao tentar prosseguir: [' + request.status + '] - ' + request.statusText : '') + ' Não é possível excluir um ou mais registros.');
-                        swal(data.msg, {
-                            icon: "success",
-                        });
                         countCheckState('none');
+
+                        setTimeout(function() {
+                            load_page(data);
+                            swal('Pedido cancelado!', {
+                                icon: "success",
+                            });
+                        }, 200);
+
                     }
 
-                });
+                },
+
+                error: function(request, status, error) {
+                    alert((request.status !== 200 ? 'Houve um erro ao tentar prosseguir: [' + request.status + '] - ' + request.statusText : '') + ' Não é possível excluir um ou mais registros.');
+                    swal(data.msg, {
+                        icon: "success",
+                    });
+                    countCheckState('none');
+                }
+
+            });
 
         } else {
             // swal("Nenhuma alteração realizada!");
@@ -599,47 +580,45 @@ function remover($del) {
 
     // console.log($del);
 
-    $.ajax(
-        {
-            type: 'post',
-            dataType: 'json',
-            url: params.url,
-            data:
-            {
-                id: params.fields,
-                acao: params.action
-            },
-            success: function (data) {
+    $.ajax({
+        type: 'post',
+        dataType: 'json',
+        url: params.url,
+        data: {
+            id: params.fields,
+            acao: params.action
+        },
+        success: function(data) {
 
-                if (data.type === 'success') {
+            if (data.type === 'success') {
 
-                    var count = 0;
-                    var i;
+                var count = 0;
+                var i;
 
-                    for (i = 0; i < data.fields.length; i++) {
-                        $('tr#' + data.fields[i]).remove();
-                    }
-
-
+                for (i = 0; i < data.fields.length; i++) {
+                    $('tr#' + data.fields[i]).remove();
                 }
 
-                countCheckState('none');
-                params.modal.find(params.informacao).slideUp(200);
 
-                setTimeout(function () {
-                    load_page(data);
-                    notificacao(data);
-                }, 200);
-
-            },
-
-            error: function (request, status, error) {
-                alert((request.status !== 200 ? 'Houve um erro ao tentar prosseguir: [' + request.status + '] - ' + request.statusText : '') + ' Não é possível excluir um ou mais registros.');
-                countCheckState('none');
-                params.modal.find(params.informacao).slideUp(200);
             }
 
-        });
+            countCheckState('none');
+            params.modal.find(params.informacao).slideUp(200);
+
+            setTimeout(function() {
+                load_page(data);
+                notificacao(data);
+            }, 200);
+
+        },
+
+        error: function(request, status, error) {
+            alert((request.status !== 200 ? 'Houve um erro ao tentar prosseguir: [' + request.status + '] - ' + request.statusText : '') + ' Não é possível excluir um ou mais registros.');
+            countCheckState('none');
+            params.modal.find(params.informacao).slideUp(200);
+        }
+
+    });
 
 }
 
@@ -650,9 +629,8 @@ function is_numeric(n) {
 /**
  * Função para aplicar máscaras nos inputs do navegador.
  */
-var App =
-{
-    aplicarMascaras: function () {
+var App = {
+    aplicarMascaras: function() {
 
         var is_num = $('.is_num');
         var is_cpf = $('.is_cpf');
@@ -665,43 +643,43 @@ var App =
         var is_time = $('.is_time');
         var is_cep = $('.is_cep');
 
-        is_num.each(function () {
+        is_num.each(function() {
             var $class = typeof $(this).attr('data-align') !== 'undefined' && $(this).attr('data-align') != '' ? $(this).attr('data-align') : 'right';
             var $placeholder = typeof $(this).attr('placeholder') !== 'undefined' && $(this).attr('placeholder') != '' ? $(this).attr('placeholder') : '0';
             var $maxlength = typeof $(this).attr('maxlength') !== 'undefined' && $(this).attr('maxlength') != '' ? $(this).attr('maxlength') : 9;
 
             var input = this;
 
-            $(window).load(function (e) {
+            $(window).load(function(e) {
                 MascaraUtils.mascara(input, MascaraUtils.NUMERICO);
             });
 
-            $(this).keyup(function () {
+            $(this).keyup(function() {
                 MascaraUtils.mascara(this, MascaraUtils.NUMERICO);
-            }).on('keypress', function () {
+            }).on('keypress', function() {
                 MascaraUtils.mascara(this, MascaraUtils.NUMERICO);
             }).attr('maxlength', $maxlength).attr('placeholder', $placeholder).addClass('text-' + $class);
             if ($(this).val() !== '')
                 MascaraUtils.mascara(this, MascaraUtils.NUMERICO);
         });
 
-        is_cpf.each(function () {
+        is_cpf.each(function() {
             var input = this;
 
-            $(window).load(function (e) {
+            $(window).load(function(e) {
                 MascaraUtils.mascara(input, MascaraUtils.CPF);
             });
 
-            $(this).keyup(function () {
+            $(this).keyup(function() {
                 MascaraUtils.mascara(this, MascaraUtils.CPF);
-            }).on('keypress', function () {
+            }).on('keypress', function() {
                 MascaraUtils.mascara(this, MascaraUtils.CPF);
             }).attr('maxlength', 14).attr('placeholder', '000.000.000-00');
 
 
         });
 
-        is_cnpj.each(function () {
+        is_cnpj.each(function() {
 
             var input = this;
 
@@ -709,16 +687,16 @@ var App =
             MascaraUtils.mascara(input, MascaraUtils.CNPJ);
             //          });
 
-            $(this).keyup(function () {
+            $(this).keyup(function() {
                 MascaraUtils.mascara(this, MascaraUtils.CNPJ);
-            }).on('keypress', function () {
+            }).on('keypress', function() {
                 MascaraUtils.mascara(this, MascaraUtils.CNPJ);
             }).attr('maxlength', 18).attr('placeholder', '00.000.000/0000-00');
             if ($(this).val() !== '')
                 MascaraUtils.mascara(this, MascaraUtils.CNPJ);
         });
 
-        is_cpf_cnpj.each(function () {
+        is_cpf_cnpj.each(function() {
 
             var input = this;
 
@@ -726,16 +704,16 @@ var App =
             MascaraUtils.mascara(input, MascaraUtils.CPF_CNPJ);
             //          });
 
-            $(this).keyup(function () {
+            $(this).keyup(function() {
                 MascaraUtils.mascara(this, MascaraUtils.CPF_CNPJ);
-            }).on('keypress', function () {
+            }).on('keypress', function() {
                 MascaraUtils.mascara(this, MascaraUtils.CPF_CNPJ);
             }).attr('maxlength', 18).attr('placeholder', 'CPF ou CNPJ');
             if ($(this).val() !== '')
                 MascaraUtils.mascara(this, MascaraUtils.CPF_CNPJ);
         });
 
-        is_phone.each(function () {
+        is_phone.each(function() {
 
 
             var input = this;
@@ -745,9 +723,9 @@ var App =
             MascaraUtils.mascara(input, MascaraUtils.TELEFONE);
             //          });
 
-            $(this).keyup(function () {
+            $(this).keyup(function() {
                 MascaraUtils.mascara(this, MascaraUtils.TELEFONE);
-            }).on('keypress', function () {
+            }).on('keypress', function() {
                 MascaraUtils.mascara(this, MascaraUtils.TELEFONE);
             }).attr('maxlength', 15).attr('placeholder', $placeholder);
 
@@ -758,7 +736,7 @@ var App =
                 MascaraUtils.mascara(this, MascaraUtils.TELEFONE);
         });
 
-        is_celular.each(function () {
+        is_celular.each(function() {
 
             var input = this;
 
@@ -766,9 +744,9 @@ var App =
             MascaraUtils.mascara(input, MascaraUtils.CELULAR);
             //          });
 
-            $(this).keyup(function () {
+            $(this).keyup(function() {
                 MascaraUtils.mascara(this, MascaraUtils.CELULAR);
-            }).on('keypress', function () {
+            }).on('keypress', function() {
                 MascaraUtils.mascara(this, MascaraUtils.CELULAR);
             }).attr('maxlength', 17).attr('placeholder', '(XX) X XXXX.XXXX');
             if ($(this).val() !== '')
@@ -776,7 +754,7 @@ var App =
         });
 
 
-        is_decimal.each(function () {
+        is_decimal.each(function() {
 
             var exp = /^0/;
             var $val = typeof $(this).attr('data-value') !== 'undefined' && $(this).attr('data-value') != null ? $(this).attr('data-value') : '0,00';
@@ -790,7 +768,7 @@ var App =
             MascaraUtils.mascara(input, MascaraUtils.DECIMAL);
             //          });
 
-            $(this).on('keydown', function (e) {
+            $(this).on('keydown', function(e) {
 
                 if ($(this).val() == '' || $(this).val() == '0,00' || $(this).val() == '0') {
                     if (e.keyCode == 8) {
@@ -806,7 +784,7 @@ var App =
 
                 MascaraUtils.mascara(this, MascaraUtils.DECIMAL);
 
-            }).on('keyup', function (e) {
+            }).on('keyup', function(e) {
 
                 if ($(this).val() == '' || $(this).val() == '0,00' || $(this).val() == '0')
                     if (e.keyCode == 8) {
@@ -815,10 +793,10 @@ var App =
                         return false;
                     }
 
-            }).attr('maxlength', (typeof $(this).attr('maxlength') !== 'undefined' ? $(this).attr('maxlength') : 9)).attr('placeholder', '0,00').addClass('text-' + $class).focus(function () {
+            }).attr('maxlength', (typeof $(this).attr('maxlength') !== 'undefined' ? $(this).attr('maxlength') : 9)).attr('placeholder', '0,00').addClass('text-' + $class).focus(function() {
                 // if ($(this).val().length == 0 || $(this).val() == 0)
                 // $(this).val('0,00');
-            }).on('blur', function () {
+            }).on('blur', function() {
                 if ($(this).val().length == 0 || $(this).val() == 0)
                     $(this).val('0,00');
 
@@ -826,7 +804,7 @@ var App =
 
         });
 
-        is_date.each(function () {
+        is_date.each(function() {
 
             var input = this;
             var placeholder = typeof $(this).attr('placeholder') !== 'undefined' ? $(this).attr('placeholder') : 'dd/mm/aaaa';
@@ -837,40 +815,39 @@ var App =
             else
                 $(this).removeAttr('placeholder');
 
-            $(document).ready(function (e) {
+            $(document).ready(function(e) {
                 MascaraUtils.mascara(input, MascaraUtils.DATA);
             });
 
-            $(this).on('keyup', function () {
+            $(this).on('keyup', function() {
                 MascaraUtils.mascara(this, MascaraUtils.DATA);
-            }).on('keypress', function () {
+            }).on('keypress', function() {
                 MascaraUtils.mascara(this, MascaraUtils.DATA);
-            }).attr('maxlength', 10).datepicker(
-                {
-                    format: 'dd/mm/yyyy',
-                    startView: 2,
-                    autoClose: true,
-                    // todayHightlight : true,
-                    // endYear      : 'today',
-                    // language        : 'pt-BR',
-                    // assumeNearbyYear: true,
-                    // changeYear      : true,
-                    minDate: ($(this).data('start') !== 'undefined' ? $(this).data('start') : null),
-                    maxDate: ($(this).data('end') !== 'undefined' ? $(this).data('end') : null),
-                    // yearRange       : ($(this).attr('data-range') !== 'undefined' ? $(this).attr('data-range') : 'c-50:c+50' ),
-                    months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'], // Names of months for drop-down and formatting
-                    monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'], // For formatting
-                    weekdays: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'], // For formatting
-                    weekdaysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'], // For formatting
-                    weekdaysAbbrev: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'], // Column headings for days starting at Sunday               
-                });
+            }).attr('maxlength', 10).datepicker({
+                format: 'dd/mm/yyyy',
+                startView: 2,
+                autoClose: true,
+                // todayHightlight : true,
+                // endYear      : 'today',
+                // language        : 'pt-BR',
+                // assumeNearbyYear: true,
+                // changeYear      : true,
+                minDate: ($(this).data('start') !== 'undefined' ? $(this).data('start') : null),
+                maxDate: ($(this).data('end') !== 'undefined' ? $(this).data('end') : null),
+                // yearRange       : ($(this).attr('data-range') !== 'undefined' ? $(this).attr('data-range') : 'c-50:c+50' ),
+                months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'], // Names of months for drop-down and formatting
+                monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'], // For formatting
+                weekdays: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'], // For formatting
+                weekdaysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'], // For formatting
+                weekdaysAbbrev: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'], // Column headings for days starting at Sunday               
+            });
 
             if ($(this).val() !== '')
                 MascaraUtils.mascara(this, MascaraUtils.DATA);
 
         });
 
-        is_time.each(function () {
+        is_time.each(function() {
 
             var mask = null;
 
@@ -889,7 +866,7 @@ var App =
             MascaraUtils.mascara(input, mask);
             //          });
 
-            $(this).on('focus', function () {
+            $(this).on('focus', function() {
 
                 if ($(this).val() == '')
                     $('00' + $(this).val()).slice(-1);
@@ -898,19 +875,19 @@ var App =
 
                 $(this).parent().addClass('focus');
 
-            }).on('blur', function () {
+            }).on('blur', function() {
                 $(this).parent().removeClass('focus');
             });
 
-            $(this).on('keyup', function (e) {
+            $(this).on('keyup', function(e) {
 
                 MascaraUtils.mascara(this, mask);
 
-            }).on('keypress', function () {
+            }).on('keypress', function() {
 
                 MascaraUtils.mascara(this, mask);
 
-            }).attr('maxlength', 3).attr('placeholder', '00').css({ 'color': '#000' }).on('keydown', function (e) {
+            }).attr('maxlength', 3).attr('placeholder', '00').css({ 'color': '#000' }).on('keydown', function(e) {
                 if (e.keyCode == 13 && $(this).val() != '') {
                     e.preventDefault();
                     $(this).blur();
@@ -928,7 +905,7 @@ var App =
 
         });
 
-        is_cep.each(function () {
+        is_cep.each(function() {
 
             var input = this;
 
@@ -936,9 +913,9 @@ var App =
             MascaraUtils.mascara(input, MascaraUtils.CEP);
             //          });
 
-            $(this).keyup(function () {
+            $(this).keyup(function() {
                 MascaraUtils.mascara(this, MascaraUtils.CEP);
-            }).on('keypress', function () {
+            }).on('keypress', function() {
                 MascaraUtils.mascara(this, MascaraUtils.CEP);
             }).attr('maxlength', 10).attr('placeholder', 'XXXXX-XXX');
             if ($(this).val() !== '')
@@ -952,8 +929,7 @@ var App =
 var obj,
     fn;
 
-var MascaraUtils =
-{
+var MascaraUtils = {
     NUMERICO: 1,
     CPF: 2,
     CNPJ: 3,
@@ -969,7 +945,7 @@ var MascaraUtils =
     CEP: 13,
     fn: null,
     obj: null,
-    mascara: function (o, f) {
+    mascara: function(o, f) {
 
         obj = o;
 
@@ -1016,13 +992,13 @@ var MascaraUtils =
         }
         setTimeout('MascaraUtils.exec()', 1);
     },
-    exec: function () {
+    exec: function() {
         obj.value = fn(obj.value);
     },
-    Numerico: function (v) {
+    Numerico: function(v) {
         return v.replace(/\D/g, '');
     },
-    Telefone: function (v) {
+    Telefone: function(v) {
         v = v.replace(/\D/g, '');
         v = v.replace(/^(\d{2})(\d)/g, '($1) $2');
         v = v.replace(/(\d{3,4})(\d)/, '$1.$2');
@@ -1034,21 +1010,20 @@ var MascaraUtils =
         }
         return v;
     },
-    Cpf: function (v) {
+    Cpf: function(v) {
         v = v.replace(/\D/g, '');
         v = v.replace(/(\d{3})(\d)/, '$1.$2');
         v = v.replace(/(\d{3})(\d)/, '$1.$2');
         v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
         return v;
     },
-    Cpf_cnpj: function (v) {
+    Cpf_cnpj: function(v) {
         if (v.length <= 14) {
             v = v.replace(/\D/g, '');
             v = v.replace(/(\d{3})(\d)/, '$1.$2');
             v = v.replace(/(\d{3})(\d)/, '$1.$2');
             v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-        }
-        else if (v.length > 14 && v.length < 19) {
+        } else if (v.length > 14 && v.length < 19) {
             v = v.replace(/\D/g, '');
             v = v.replace(/^(\d{2})(\d)/, '$1.$2');
             v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
@@ -1057,7 +1032,7 @@ var MascaraUtils =
         }
         return v;
     },
-    Decimal: function (v) {
+    Decimal: function(v) {
         var splitext = v.split('');
         var revertext = splitext.reverse();
         var v2 = revertext.join('');
@@ -1099,19 +1074,19 @@ var MascaraUtils =
         v2 = revertext.join('');
         return v2;
     },
-    Data: function (v) {
+    Data: function(v) {
         v = v.replace(/\D/g, '');
         v = v.replace(/(\d{2})(\d)/, '$1/$2');
         v = v.replace(/(\d{2})(\d)/, '$1/$2');
         return v;
     },
-    Time: function (v) {
+    Time: function(v) {
         v = v.replace(/\D/g, '');
         v = v.replace(/(\d{2})(\d)/, '$1:$2');
         v = v.replace(/(\d{2})(\d)/, '$1:$2');
         return v;
     },
-    Hora: function (v) {
+    Hora: function(v) {
 
         var exp = /^([0-1][0-9])|([2][0-3])$/;
         var hora = true;
@@ -1124,7 +1099,7 @@ var MascaraUtils =
         return ('00' + v).slice(-2);
 
     },
-    Minuto: function (v) {
+    Minuto: function(v) {
         var exp = /^([0-5][0-9])$/;
         var min = true;
 
@@ -1136,7 +1111,7 @@ var MascaraUtils =
         return ('00' + v).slice(-2);
 
     },
-    Segundo: function (v) {
+    Segundo: function(v) {
         var exp = /^([0-5][0-9])$/;
         var sec = true;
 
@@ -1148,12 +1123,12 @@ var MascaraUtils =
         return ('00' + v).slice(-2);
 
     },
-    Cep: function (v) {
+    Cep: function(v) {
         v = v.replace(/\D/g, '');
         v = v.replace(/^(\d{5})(\d)/, '$1-$2');
         return v;
     },
-    Cnpj: function (v) {
+    Cnpj: function(v) {
         v = v.replace(/\D/g, '');
         v = v.replace(/^(\d{2})(\d)/, '$1.$2');
         v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
@@ -1161,7 +1136,7 @@ var MascaraUtils =
         v = v.replace(/(\d{4})(\d)/, '$1-$2');
         return v;
     },
-    Celular: function (v) {
+    Celular: function(v) {
         v = v.replace(/\D/g, '');
         v = v.replace(/^(\d\d)(\d)/g, '($1) $2');
         v = v.replace(/(\d)(\d{2})/, '$1 $2');
@@ -1171,12 +1146,11 @@ var MascaraUtils =
 
 };
 
-var Events =
-{
+var Events = {
 
-    Evento: function (e) {
+    Evento: function(e) {
 
-        $(document).keyup(function (e) {
+        $(document).keyup(function(e) {
             key_event.tecla(e.keyCode);
         });
 
@@ -1187,13 +1161,12 @@ var Events =
 /**
  * Eventos para teclado
  */
-var key_event =
-{
+var key_event = {
 
     BACK_NAV: 1,
     fn: null,
     obj: null,
-    tecla: function (k) {
+    tecla: function(k) {
 
         obj = k;
 
@@ -1210,13 +1183,13 @@ var key_event =
         setTimeout('key_event.exec()', 1);
 
     },
-    exec: function () {
+    exec: function() {
         return fn(obj);
     },
-    Back_nav: function (event) {
+    Back_nav: function(event) {
 
     },
-    Next_nav: function (e) {
+    Next_nav: function(e) {
 
     }
 
@@ -1231,7 +1204,7 @@ var key_event =
  * Função para selecionar e desselecionar todos os checkboxes de uma tabela para
  * excluir/alterar.
  */
-var countCheckState = function (param) {
+var countCheckState = function(param) {
 
     // Variável para contar total de checkboxes
     var countChk = $('.datatable tbody :input:checkbox.trash').length;
@@ -1251,17 +1224,17 @@ var countCheckState = function (param) {
         if (!$('.btn-group').find('.btn-excluir').is(':visible')) {
             animate($('.btn-group').find('.btn-excluir'), 'flipInY');
             animate($('.btn-group').find('.btn-inserir'), 'flipOutY');
-            setTimeout(function () {
+            setTimeout(function() {
                 $('.btn-group').find('.btn-excluir').removeClass('hide');
                 $('.btn-group').find('.btn-inserir').addClass('hide');
             }, 2);
         }
 
         if ($('.navbar-main').find('.nav-wrapper').is(':visible')) {
-            animate($('.dataTables_length').find('label').show(), 'fadeIn fast', function (e) {
+            animate($('.dataTables_length').find('label').show(), 'fadeIn fast', function(e) {
                 e.show();
             });
-            animate($('.navbar-main').find('.nav-wrapper'), 'fadeOut fast', function (e) {
+            animate($('.navbar-main').find('.nav-wrapper'), 'fadeOut fast', function(e) {
                 e.removeClass('fast').hide();
             });
         }
@@ -1273,8 +1246,7 @@ var countCheckState = function (param) {
         if (checkeds === countChk) {
             // $('.datatable thead :input:checkbox').prop('checked', true);
             indeterminateCheckbox.indeterminate = false;
-        }
-        else if (checkeds < countChk) {
+        } else if (checkeds < countChk) {
             // $('.datatable thead :input:checkbox').prop('checked', false);
             if (typeof indeterminateCheckbox !== 'undefined' && indeterminateCheckbox !== null)
                 indeterminateCheckbox.indeterminate = true;
@@ -1282,23 +1254,22 @@ var countCheckState = function (param) {
 
         $('.datatable thead :input:checkbox.trash').prop('checked', true);
 
-    }
-    else {
+    } else {
 
         if (!$('.btn-group').find('.btn-inserir').is(':visible')) {
             animate($('.btn-group').find('.btn-inserir'), 'flipInY');
             animate($('.btn-group').find('.btn-excluir'), 'flipIntY');
-            setTimeout(function () {
+            setTimeout(function() {
                 $('.btn-group').find('.btn-inserir').removeClass('hide');
                 $('.btn-group').find('.btn-excluir').addClass('hide');
             }, 2);
         }
 
         if (!$('.navbar-main').find('.nav-wrapper').is(':visible')) {
-            animate($('.dataTables_length').find('label'), 'fadeOut fast', function (e) {
+            animate($('.dataTables_length').find('label'), 'fadeOut fast', function(e) {
                 e.hide();
             });
-            animate($('.navbar-main').find('.nav-wrapper').show(), 'fadeIn fast', function (e) {
+            animate($('.navbar-main').find('.nav-wrapper').show(), 'fadeIn fast', function(e) {
                 e.removeClass('fast').show();
             });
         }
@@ -1314,7 +1285,7 @@ var countCheckState = function (param) {
 
 };
 
-var countChecked = function () {
+var countChecked = function() {
 
     var selectAll = $('.datatable').hasClass('responsive-table') ? $('.datatable thead :input:checkbox.trash') : $('.datatable ').parents('.dataTables_scroll').find('.dataTables_scrollHead').find('table thead :input:checkbox.trash');
 
@@ -1327,14 +1298,13 @@ var countChecked = function () {
     if (checkbox.length && !disabled) {
         selectAll.attr('disabled', false);
         selectAll.parents().removeClass('disabled');
-    }
-    else {
+    } else {
         selectAll.attr('disabled', true);
         selectAll.parents().addClass('disabled');
     }
 
     // Adicionar o atributo 'checked' no checkbox
-    checkbox.on('change', function () {
+    checkbox.on('change', function() {
 
         // Adicionar a classe selected na tabela para grifar linha selecionada.
         $(this).prop('checked');
@@ -1349,14 +1319,13 @@ var countChecked = function () {
     });
 
     // Se o usuário quiser selecionar todos...
-    selectAll.on('change', function () {
+    selectAll.on('change', function() {
 
         var parents = $('.datatable').hasClass('responsive-table') ? $(this).parents('table').find('tbody tr') : $(this).parents('.dataTables_scroll').find('.dataTables_scrollBody').find('tbody tr');
 
         if (selectAll.is(':checked')) {
             parents.addClass('selected').find(':input:checkbox.trash').prop('checked', true);
-        }
-        else {
+        } else {
             $(parents).removeClass('selected').find(':input:checkbox.trash:checked').removeClass('selected').prop('checked', false);
         }
 
@@ -1380,7 +1349,7 @@ function toupper(str) {
 
 function str_to_upper() {
 
-    $('input[type=text], textarea').keyup(function () {
+    $('input[type=text], textarea').keyup(function() {
         $(this).val($(this).val().toUpperCase());
     });
 
@@ -1391,16 +1360,16 @@ function str_to_upper() {
  */
 function DAR_NOME_A_ESTA_FUNCAO(request) {
 
-    setTimeout(function () {
+    setTimeout(function() {
         $('.blockUI').show();
         $('.blockUI').find('.divcentro').show();
         $('.blockUI').find('.info').html('<i class="fa fa-exclamation-triangle"></i> &nbsp; Erro &nbsp;<i class="fa fa-exclamation-triangle"></i>');
         $('.blockUI').find('.msg').html((request.status !== 200 ? 'Houve um erro ao tentar prossegir: [' + request.status + '] - ' + request.statusText : ''));
     }, 600);
 
-    $('.blockUI').find('input:button').click(function () {
+    $('.blockUI').find('input:button').click(function() {
         $('.blockUI').find('.divcentro').hide();
-        setTimeout(function () {
+        setTimeout(function() {
             $('.blockUI').hide();
         }, 200);
     });
@@ -1416,7 +1385,7 @@ function load_file(obj) {
 
     if ($('[data-toggle="da-files"]').length > 0) {
 
-        $('[data-toggle="da-files"]').each(function () {
+        $('[data-toggle="da-files"]').each(function() {
             $(this).Files();
         })
 
@@ -1477,73 +1446,68 @@ function modal_editor($modal, msg_bloqueio) {
 
             var spinner = '<div class="preloader-wrapper small active left"><div class="spinner-layer spinner-green-only">	<div class="circle-clipper left">	<div class="circle"></div></div><div class="gap-patch">	<div class="circle"></div></div><div class="circle-clipper right">	<div class="circle"></div></div></div></div>';
 
-            $('#modal-' + name).html($('<div/>').addClass('modal-content').css(
-                {
-                    'padding': '0',
-                    'height': '100%'
-                }).html($('<div/>').css(
-                    {
-                        'width': '210px',
-                        'height': '60px',
-                        'margin-left': '-105px',
-                        'margin-top': '-30px',
-                        'left': '50%',
-                        'top': '50%',
-                        'position': 'absolute',
-                        'text-align': 'center'
-                    }).html('<h5> ' + spinner + ' &nbsp; <span style="float: left; margin-left: 20px; line-height: 40px">Carregando...</span></5>')));
+            $('#modal-' + name).html($('<div/>').addClass('modal-content').css({
+                'padding': '0',
+                'height': '100%'
+            }).html($('<div/>').css({
+                'width': '210px',
+                'height': '60px',
+                'margin-left': '-105px',
+                'margin-top': '-30px',
+                'left': '50%',
+                'top': '50%',
+                'position': 'absolute',
+                'text-align': 'center'
+            }).html('<h5> ' + spinner + ' &nbsp; <span style="float: left; margin-left: 20px; line-height: 40px">Carregando...</span></5>')));
         }
 
-        $.ajax(
-            {
-                type: 'get',
-                url: href,
-                dataType: datatype,
-                success: function (data) {
+        $.ajax({
+            type: 'get',
+            url: href,
+            dataType: datatype,
+            success: function(data) {
 
-                    if (datatype === 'json') {
+                if (datatype === 'json') {
 
-                        execute_data(data, name);
+                    execute_data(data, name);
+                    Form.Blocked($button, $icon, false);
+
+                } else {
+                    $('#modal-' + name).html(data);
+                    jQuery('#modal-' + name).find('form').each(function(e) {
+                        var F = $(this);
+                        var form = new Forms();
+                        form.Submit(F);
+                    });
+                }
+
+            },
+            error: function(data) {
+
+                if (datatype === 'json') {
+
+                    execute_data(data.responseText, name);
+                    setTimeout(function() {
                         Form.Blocked($button, $icon, false);
+                    }, 300);
 
-                    }
-                    else {
-                        $('#modal-' + name).html(data);
-                        jQuery('#modal-' + name).find('form').each(function (e) {
+                } else {
+                    setTimeout(function() {
+                        $('#modal-' + name).html(data.responseText).append('<p class="center-align"><a href="javascript:void(0);" class="btn modal-close gradient-45deg-indigo-blue waves-effect waves-light">Fechar</a></p>');
+                        jQuery('#modal-' + name).find('form').each(function(e) {
                             var F = $(this);
                             var form = new Forms();
                             form.Submit(F);
                         });
-                    }
-
-                },
-                error: function (data) {
-
-                    if (datatype === 'json') {
-
-                        execute_data(data.responseText, name);
-                        setTimeout(function () {
-                            Form.Blocked($button, $icon, false);
-                        }, 300);
-
-                    }
-                    else {
-                        setTimeout(function () {
-                            $('#modal-' + name).html(data.responseText).append('<p class="center-align"><a href="javascript:void(0);" class="btn modal-close gradient-45deg-indigo-blue waves-effect waves-light">Fechar</a></p>');
-                            jQuery('#modal-' + name).find('form').each(function (e) {
-                                var F = $(this);
-                                var form = new Forms();
-                                form.Submit(F);
-                            });
-                        }, 500);
-                    }
-
+                    }, 500);
                 }
 
-            });
+            }
 
-    }
-    else {
+        });
+
+    } else {
+        console.log('href is undefined');
         $('#modal-' + name + ' .dialog').find('input[type="text"]').val('');
         $('#modal-' + name + ' .dialog').find('[name="id"]').val('');
         $('#modal-' + name + ' .dialog').find('[name="action"]').val(action);
@@ -1553,7 +1517,7 @@ function modal_editor($modal, msg_bloqueio) {
 
 function modal_edit() {
 
-    $(':button[data-toggle="modal"],[data-type="btn-modal"],[type="reset"]').click(function (e) {
+    $(':button[data-toggle="modal"],[data-type="btn-modal"],[type="reset"]').click(function(e) {
 
         e.preventDefault();
 
@@ -1577,9 +1541,9 @@ function modal_edit() {
  * @param {Object} url
  * @param {object} acao
  */
-var update_status = function () {
+var update_status = function() {
 
-    $('.update.status').on('change', function () {
+    $('.update.status').on('change', function() {
 
         var self = $(this);
         var url = self.data('href');
@@ -1595,13 +1559,12 @@ var update_status = function () {
             'type': 'post',
             'dataType': 'json',
             'url': url,
-            'data':
-            {
+            'data': {
                 'acao': 'status',
                 'id': id,
                 'value': value
             },
-            'success': function (data) {
+            'success': function(data) {
                 if (data.type === 'success')
                     if (value == '0')
                         $(self.parents('tr').find('.sts').addClass('muted'));
@@ -1622,8 +1585,7 @@ var update_status = function () {
 
 
 /** Estrelas **/
-function stars() {
-}
+function stars() {}
 
 // Adicionar produtos numa promoção
 function add_produtos() {
@@ -1631,7 +1593,7 @@ function add_produtos() {
     var url = $('table.produtos tr#add input[name="composicao"]').attr('data-url');
     var id_table = $('table').attr('id') || false;
 
-    $('table.produtos tr#add input[type=text]').keyup(function (event) {
+    $('table.produtos tr#add input[type=text]').keyup(function(event) {
 
         var i = 0;
         var option = $('table.produtos tbody tr#add select[name="composicao"]').find('option').val();
@@ -1641,7 +1603,7 @@ function add_produtos() {
         var inputs_length = inputs.length;
 
         // verificar se todos os campos estão preenchidos
-        $(inputs).each(function () {
+        $(inputs).each(function() {
 
             var str = $('input[name=valor_porcao]').val();
             var num = str.replace('.', '').replace(',', '.');
@@ -1663,7 +1625,7 @@ function add_produtos() {
 
                     if (event.keyCode == 13) {
                         $('input[name=valor_porcao]').focus();
-                        $('table.produtos tbody tr#add').find('input[type=text]').each(function (index) {
+                        $('table.produtos tbody tr#add').find('input[type=text]').each(function(index) {
 
                             if (!$(this).parents().next().find('input').is(':disabled'))
                                 self.blur();
@@ -1689,8 +1651,7 @@ function add_produtos() {
                 $('button.add-campo').click();
             }
 
-        }
-        else {
+        } else {
             $('table.produtos tr#add button.add-campo').attr('disabled', true);
         }
 
@@ -1698,13 +1659,13 @@ function add_produtos() {
 
     if ($('input[name="valor"]').val() == '0,00') {
         var valor = 0;
-        $('table.produtos tbody tr.items').find('input[name="valor_porcao[]"]').each(function () {
+        $('table.produtos tbody tr.items').find('input[name="valor_porcao[]"]').each(function() {
             valor += parseFloat($(this).val().replace('.', '').replace(',', '.'));
         });
         set_total(valor.toFixed(2), 'add');
     }
 
-    $('table.produtos tbody tr#add button.add-campo').click(function (event) {
+    $('table.produtos tbody tr#add button.add-campo').click(function(event) {
 
         event.preventDefault();
 
@@ -1817,7 +1778,7 @@ function add_produtos() {
 
     remover_linha();
 
-    $('table.produtos tbody tr#add input[type=text]').keypress(function (event) {
+    $('table.produtos tbody tr#add input[type=text]').keypress(function(event) {
 
         if (event.keyCode === 13) {
             event.preventDefault();
@@ -1858,38 +1819,35 @@ function add_produtos() {
     }
 
     function remover_linha() {
-        $('table.produtos tbody tr.items a.remover').click(function (event) {
+        $('table.produtos tbody tr.items a.remover').click(function(event) {
             event.preventDefault();
 
             var id = $(this).attr('id');
             var href = $(this).attr('href');
 
             if (href !== undefined && href !== '#') {
-                $.ajax(
-                    {
-                        type: 'post',
-                        dataType: 'json',
-                        url: href,
-                        data:
-                        {
-                            acao: 'removerpromocao',
-                            id: id
-                        },
-                        success: function (data) {
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    url: href,
+                    data: {
+                        acao: 'removerpromocao',
+                        id: id
+                    },
+                    success: function(data) {
 
-                            exibir_alerta(data);
+                        exibir_alerta(data);
 
-                            $('a#' + data.item).parents('tr').remove();
-                            $('table.produtos tbody tr.items a.remover').removeAttr('disabled');
+                        $('a#' + data.item).parents('tr').remove();
+                        $('table.produtos tbody tr.items a.remover').removeAttr('disabled');
 
-                        },
-                        error: function () {
+                    },
+                    error: function() {
 
-                        }
-                    });
+                    }
+                });
 
-            }
-            else {
+            } else {
 
                 var linha = $(this).closest('tr');
                 var valor = linha.find($('input[name="valor_porcao[]"]')).val();
@@ -1909,7 +1867,7 @@ function add_produtos() {
 
     function buttons_add() {
 
-        $('.direction-buttons').find('button[type="button"]').click(function () {
+        $('.direction-buttons').find('button[type="button"]').click(function() {
 
             var valor_total = 0;
             var quantidade = 0;
@@ -1948,7 +1906,7 @@ function add_produtos() {
         var valido;
 
         // verificar se não existe nenhum produto no corpo da tabela com o nome igual ao campo de texto
-        $('table.produtos tbody tr.items').find('input[name="composicao[]"]').each(function (index) {
+        $('table.produtos tbody tr.items').find('input[name="composicao[]"]').each(function(index) {
 
             if (val == $(this).val()) {
                 valido = true;
@@ -1975,39 +1933,38 @@ function init_autocomplete() {
         return false;
 
     // initialize autocomplete with custom appendTo
-    $('.autocomplete').each(function () {
+    $('.autocomplete').each(function() {
 
         var self = $(this);
         var next_input = $(this).attr('data-next-input');
-        $(this).autocomplete(
-            {
-                serviceUrl: $(this).attr('data-url'),
-                type: 'post',
-                dataType: 'json',
-                transformResult: function (data) {
-                    return {
-                        suggestions: $.map(data, function (value) {
-                            return { value: value.field, data: { id: value.id, valor: value.valor } }
-                        })
-                    };
-                },
-                onSelect: function (data) {
+        $(this).autocomplete({
+            serviceUrl: $(this).attr('data-url'),
+            type: 'post',
+            dataType: 'json',
+            transformResult: function(data) {
+                return {
+                    suggestions: $.map(data, function(value) {
+                        return { value: value.field, data: { id: value.id, valor: value.valor } }
+                    })
+                };
+            },
+            onSelect: function(data) {
 
-                    $.map(data, function (key, value) {
-                        self.attr('data-id', key.id).next('input[type=hidden]').val(key.id);
+                $.map(data, function(key, value) {
+                    self.attr('data-id', key.id).next('input[type=hidden]').val(key.id);
 
-                        if (key.valor != undefined) {
-                            $('input[name="valor_porcao"]').val(key.valor);
-                            $('table.produtos tr#add button.add-campo').attr('disabled', false);
-                        }
-                    });
+                    if (key.valor != undefined) {
+                        $('input[name="valor_porcao"]').val(key.valor);
+                        $('table.produtos tr#add button.add-campo').attr('disabled', false);
+                    }
+                });
 
-                },
-                // showNoSuggestionNotice : true,
-                zIndex: 9999,
-                maxHeight: 200,
-                minChars: 1
-            });
+            },
+            // showNoSuggestionNotice : true,
+            zIndex: 9999,
+            maxHeight: 200,
+            minChars: 1
+        });
     });
 
     function autoFocus(input) {
@@ -2023,7 +1980,7 @@ function animate(component, animation, callback) {
     var object;
     var animations = ["animated", "bounce", "flash", "pulse", "rubberBand", "shake", "swing", "tada", "wobble", "jello", "heartBeat", "bounceIn", "bounceInDown", "bounceInLeft", "bounceInRight", "bounceInUp", "bounceOut", "bounceOutDown", "bounceOutLeft", "bounceOutRight", "bounceOutUp", "fadeIn", "fadeInDown", "fadeInDownBig", "fadeInLeft", "fadeInLeftBig", "fadeInRight", "fadeInRightBig", "fadeInUp", "fadeInUpBig", "fadeOut", "fadeOutDown", "fadeOutDownBig", "fadeOutLeft", "fadeOutLeftBig", "fadeOutRight", "fadeOutRightBig", "fadeOutUp", "fadeOutUpBig", "flip", "flipInX", "flipInY", "flipOutX", "flipOutY", "lightSpeedIn", "lightSpeedOut", "rotateIn", "rotateInDownLeft", "rotateInDownRight", "rotateInUpLeft", "rotateInUpRight", "rotateOut", "rotateOutDownLeft", "rotateOutDownRight", "rotateOutUpLeft", "rotateOutUpRight", "slideInUp", "slideInDown", "slideInLeft", "slideInRight", "slideOutUp", "slideOutDown", "slideOutLeft", "slideOutRight↵	", "zoomIn", "zoomInDown", "zoomInLeft", "zoomInRight", "zoomInUp", "zoomOut", "zoomOutDown", "zoomOutLeft", "zoomOutRight", "zoomOutUp", "hinge", "jackInTheBox", "rollIn", "rollOut"]
 
-    $(component).removeClass(animations).addClass(animation + ' animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+    $(component).removeClass(animations).addClass(animation + ' animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
         $(this).removeClass(animations);
 
         if (typeof callback === 'function')
@@ -2032,16 +1989,15 @@ function animate(component, animation, callback) {
 
 };
 
-$(document).ready(function () {
-    $('.js--triggerAnimation').click(function (e) {
+$(document).ready(function() {
+    $('.js--triggerAnimation').click(function(e) {
         e.preventDefault();
         var anim = $('.js--animations').val();
         testAnim(anim);
     });
 
-    $('.js--animations').change(function () {
+    $('.js--animations').change(function() {
         var anim = $(this).val();
         testAnim(anim);
     });
 });
-

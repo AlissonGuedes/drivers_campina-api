@@ -107,9 +107,9 @@ namespace Config
 
 	/** Parceiros **/
 	$routes -> group('parceiros', function($routes){
-		$routes -> get('(:any)', 'Parceiros::index');
-		$routes -> get('(:num)/servicos', 'Parceiros::servicos');
-		$routes -> get('(:num)/servicos/(:num)', 'Servicos::agenda');
+		$routes -> add('(:any)', 'Parceiros::index');
+		$routes -> get('(:any)/(:num)/servicos/', 'Parceiros::listarServicos');
+		$routes -> get('(:any)/servicos', 'Parceiros::genda');
 
 	});
 

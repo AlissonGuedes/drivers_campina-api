@@ -25,16 +25,13 @@ if ( configuracoes('publicado') === '1' )
 		 */
 		require_once ('sidebar.phtml');
 
-		echo '	<!-- # begin content -->
-				<div id="content" class="row">';
-
 		/*
 		 * Inserir o Header do site
 		 */
 		require_once ('header.phtml');
 
-		echo '		<!-- # begin main -->
-					<div id="main">';
+		echo '<!-- # begin main -->
+		<div id="main">';
 
 		/*
 		 * Inserir breadcrumbs
@@ -48,11 +45,9 @@ if ( configuracoes('publicado') === '1' )
 		#require(VIEWPATH . 'templates' . DS . $view);
 		require_once ($this -> renderVars['file']);
 
-		echo '		</div>
-					<!-- # end main -->';
+		echo '</div>
+		<!-- # end main -->';
 
-		echo '	</div>
-				<!--/ # end content -->';
 
 		/*
 		 * Inserir o Footer do site

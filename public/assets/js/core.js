@@ -14,48 +14,49 @@ window.onload = uri.Loader(is_ajax);
 /**
  *
  */
-$(document).ready(function()
-{
+$(document).ready(function () {
 
 	autoload();
 
-	$.ajax(
-	{
-		'type' : 'post',
-		'url' : MAIN + 'env',
-		'data' :
-		{
-			'checkenv' : true
-		},
-		'dataType' : 'json',
-		success : function(data)
-		{
+	$('#fuse-splash-screen').fadeOut();
 
-			if(data.type === 'success')
-			{
-				if(data.debug)
-				{
-					M.toast(
-					{
-						html : data.msg,
-						classes : 'amber darken-3',
-						// displayLength : Infinity
-							displayLength: 5000
-					});
+	// $.ajax(
+	// {
+	// 	'type' : 'post',
+	// 	'url' : MAIN + 'env',
+	// 	'data' :
+	// 	{
+	// 		'checkenv' : true
+	// 	},
+	// 	'dataType' : 'json',
+	// 	success : function(data)
+	// 	{
 
-					$('.toast-action').on('click', function(e)
-					{
-						e.preventDefault();
-						M.Toast.dismissAll();
-					});
+	// 		if(data.type === 'success')
+	// 		{
+	// 			if(data.debug)
+	// 			{
+	// 				M.toast(
+	// 				{
+	// 					html : data.msg,
+	// 					classes : 'amber darken-3',
+	// 					// displayLength : Infinity
+	// 						displayLength: 5000
+	// 				});
 
-				}
+	// 				$('.toast-action').on('click', function(e)
+	// 				{
+	// 					e.preventDefault();
+	// 					M.Toast.dismissAll();
+	// 				});
 
-			}
+	// 			}
 
-		}
+	// 		}
 
-	});
+	// 	}
+
+	// });
 
 });
 

@@ -107,27 +107,30 @@ namespace Config
 		$routes -> put('login', 'Account::auth');
 		$routes -> get('logout', 'Account::logout');
 
-		// Banners
-		$routes -> group('banners', function($routes)
+		// Parceiros
+		$routes -> group('parceiros', function($routes)
 		{
 
 			// Exibe a página
-			$routes -> get('/', 'Banners::index');
-			$routes -> get('add', 'Banners::show_form');
+			$routes -> add('/', 'Parceiros::index');
+			$routes -> add('filtro/(:any)', 'Parceiros::search');
+			$routes -> add('categorias/(:any)', 'Parceiros::getByCategoria');
+			$routes -> add('(:any)/(:any)', 'Parceiros::index');
+			$routes -> add('add', 'Parceiros::show_form');
 
 			// Select
-			$routes -> get(':num', 'Banners::show_form');
-			$routes -> post('index', 'Banners::datatable');
+			$routes -> get('(:num)', 'Parceiros::show_form');
+			$routes -> post('index', 'Parceiros::datatable');
 
 			// Insert
-			$routes -> post('/', 'Banners::create');
+			$routes -> post('/', 'Parceiros::create');
 
 			// Update
-			$routes -> put('/', 'Banners::update');
-			$routes -> patch('/', 'Banners::update');
+			$routes -> put('/', 'Parceiros::update');
+			$routes -> patch('/', 'Parceiros::update');
 
 			// Delete
-			$routes -> delete('/', 'Banners::delete');
+			$routes -> delete('/', 'Parceiros::delete');
 
 		});
 
@@ -140,7 +143,7 @@ namespace Config
 			$routes -> get('add', 'Planos::show_form');
 
 			// Select
-			$routes -> get(':num', 'Planos::show_form');
+			$routes -> get('(:num)', 'Planos::show_form');
 			$routes -> post('index', 'Planos::datatable');
 
 			// Insert
@@ -164,7 +167,7 @@ namespace Config
 			$routes -> get('add', 'Comunicados::show_form');
 
 			// Select
-			$routes -> get(':num', 'Comunicados::show_form');
+			$routes -> get('(:num)', 'Comunicados::show_form');
 			$routes -> post('index', 'Comunicados::datatable');
 
 			// Insert
@@ -188,7 +191,7 @@ namespace Config
 			$routes -> get('add', 'Faqs::show_form');
 
 			// Select
-			$routes -> get(':num', 'Faqs::show_form');
+			$routes -> get('(:num)', 'Faqs::show_form');
 			$routes -> post('index', 'Faqs::datatable');
 
 			// Insert
@@ -212,7 +215,7 @@ namespace Config
 			$routes -> get('add', 'Configuracoes::show_form');
 
 			// Select
-			$routes -> get(':num', 'Configuracoes::show_form');
+			$routes -> get('(:num)', 'Configuracoes::show_form');
 			$routes -> post('index', 'Configuracoes::datatable');
 
 			// Insert
@@ -236,7 +239,7 @@ namespace Config
 			$routes -> get('add', 'Usuarios::show_form');
 
 			// Select
-			$routes -> get(':num', 'Usuarios::show_form');
+			$routes -> get('(:num)', 'Usuarios::show_form');
 			$routes -> post('index', 'Usuarios::datatable');
 
 			// Insert

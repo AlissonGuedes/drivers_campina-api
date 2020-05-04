@@ -23,7 +23,7 @@ namespace App\Controllers
 						'id' => $row -> id,
 						'categoria' => $row -> categoria,
 						'nome' => $row -> nome,
-						'imagem' => $row -> imagem,
+						'imagem' => $row -> logomarca,
 						'logradouro' => $row -> logradouro,
 						'numero' => $row -> numero,
 						'complemento' => $row -> complemento,
@@ -54,7 +54,7 @@ namespace App\Controllers
 					$data[] = array(
 						'id' => $row -> id,
 						'nome' => $row -> categoria,
-						'imagem' => $row -> imagem
+						'imagem' => $row -> logomarca
 					);
 				}
 			}
@@ -63,7 +63,7 @@ namespace App\Controllers
 
 		}
 
-		public function servicos()
+		public function listarServicos()
 		{
 
 			$data = [];
@@ -77,10 +77,10 @@ namespace App\Controllers
 						'id' => $row -> id,
 						'categoria' => $row -> id_categoria,
 						'parceiro' => $row -> id_parceiro,
+						'nome' => $row -> nomeParceiro,
 						'descricao' => $row -> descricao,
 						'valor' => number_format($row -> valor, 2, ',', '.'),
-						'imagem' => $row -> imagem
-						// id, id_categoria AS categoria, id_parceiro AS parceiro, descricao, valor, imagem
+						'imagem' => $row -> logomarca
 					);
 				}
 			}

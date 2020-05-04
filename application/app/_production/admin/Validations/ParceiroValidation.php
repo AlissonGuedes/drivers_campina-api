@@ -3,7 +3,7 @@
 namespace App\Validations
 {
 
-	class PlanoValidation extends RulesValidation {
+	class ParceiroValidation extends RulesValidation {
 
 		/**
 		 * Um array de nomes de campos que podem ser

@@ -134,8 +134,16 @@ namespace App\Models
 
 		public function getServicos()
 		{
-			$parceiro = $this -> uri -> getSegment(2);
-			return $this -> select('*') -> from('tb_servico', true) -> where('id_parceiro', $parceiro);
+			$categoria = $this -> uri -> getSegment(2);
+			$parceiro  = $this -> uri -> getSegment(3);
+			return $this -> select('S.id, S.id_categoria, S.id_parceiro, S.descricao, S.valor, S.imagem, P.nome nomeParceiro')
+						 -> from('tb_servico S,tb_categoria C, tb_parceiro P', true)
+						 -> where('S.id_parceiro', $parceiro)
+						 -> where('C.slug', $categoria)
+						 -> where('C.id = S.id_categoria')
+						 -> where('P.id = S.id_parceiro')
+						 -> where('P.id_categoria = C.id')
+						 -> orderBy('S.valor ASC');
 		}
 
 		//--------------------------------------------------------------------

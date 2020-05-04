@@ -4,32 +4,34 @@ namespace App\Controllers
 {
 
 	// Models
-	use \App\Models\PlanoTipoModel;
-	use \App\Models\PlanoModel;
+	// use \App\Models\ParceiroTipoModel;
+	use \App\Models\ParceiroModel;
 	use \App\Models\UserModel;
 	use \App\Models\CidadeModel;
 
+	use \App\Models\CategoriaModel;
+
 	// Entities
-	use \App\Entities\Plano;
+	use \App\Entities\Parceiro;
 
 	/**
-	 * Controlador que gerencia a página {planos} na área
+	 * Controlador que gerencia a página {parceiros} na área
 	 * Administrativa
 	 *
 	 * @author Alisson Guedes <alissonguedes87@gmail.com>
 	 * @version 2
 	 * @access public
 	 * @package PJM Telecom
-	 * @example classe Planos
+	 * @example classe Parceiros
 	 */
-	class Planos extends AppController {
+	class Parceiros extends AppController {
 
 		/**
 		 * Instância do banco de dados
 		 *
-		 * @var \App\Models\PlanoModel
+		 * @var \App\Models\ParceiroModel
 		 */
-		private $plano_model;
+		private $parceiro_model;
 
 		//--------------------------------------------------------------------
 
@@ -43,12 +45,13 @@ namespace App\Controllers
 
 			// Models
 			$this -> user_model = new UserModel();
-			$this -> tipo_plano_model = new PlanoTipoModel();
-			$this -> plano_model = new PlanoModel();
+			// $this -> tipo_parceiro_model = new ParceiroTipoModel();
+			$this -> parceiro_model = new ParceiroModel();
 			$this -> cidade_model = new CidadeModel();
+			$this -> categoria_model = new CategoriaModel();
 
 			// Entities
-			$this -> plano = new Plano();
+			$this -> parceiro = new Parceiro();
 
 		}
 
@@ -60,14 +63,31 @@ namespace App\Controllers
 		 * exibir a Página principal do controlador
 		 *
 		 * @method index()
-		 * @return view_path = /Views/planos/index.phtml
+		 * @return view_path = /Views/parceiros/index.phtml
 		 */
 		public function index()
 		{
 
 			$dados['titulo'] = 'Admin';
-			return $this -> view('planos/index', $dados);
+			$dados['filtro'] = null;
+			$dados['parceiros'] = $this -> parceiro_model -> getById();
+			$dados['categorias'] = $this -> categoria_model -> getCategoria();
+			return $this -> view('parceiros/index', $dados);
 
+		}
+
+		public function search(){
+			$dados['filtro'] = $this -> uri -> getSegment(3) === 'filtro' ? urldecode($this -> uri -> getSegment(4)) : null;
+			$dados['parceiros'] = $this -> parceiro_model -> getSearch();
+			$dados['categorias'] = $this -> categoria_model -> getCategoria();
+			return $this -> view('parceiros/index', $dados);
+		}
+
+		public function getByCategoria(){
+			$dados['filtro'] = $this -> uri -> getSegment(3) === 'filtro' ? urldecode($this -> uri -> getSegment(4)) : null;
+			$dados['parceiros'] = $this -> parceiro_model -> getByCategoria();
+			$dados['categorias'] = $this -> categoria_model -> getCategoria();
+			return $this -> view ('parceiros/index', $dados);
 		}
 
 		//--------------------------------------------------------------------
@@ -79,14 +99,14 @@ namespace App\Controllers
 		 * banco de dados
 		 *
 		 * @method datatable()
-		 * @return view_path = /Views/planos/datatable.phtml
+		 * @return view_path = /Views/parceiros/datatable.phtml
 		 */
 		public function datatable()
 		{
-			$dados['recordsTotal'] = $this -> plano_model -> countAll();
-			$dados['query'] = $this -> plano_model -> getPlano();
-			$dados['recordsFiltered'] = $this -> plano_model -> numRows();
-			return $this -> view('planos/datatable', $dados);
+			$dados['recordsTotal'] = $this -> parceiro_model -> countAll();
+			$dados['query'] = $this -> parceiro_model -> getParceiro();
+			$dados['recordsFiltered'] = $this -> parceiro_model -> numRows();
+			return $this -> view('parceiros/datatable', $dados);
 		}
 
 		//--------------------------------------------------------------------
@@ -99,32 +119,32 @@ namespace App\Controllers
 		 * alteração
 		 *
 		 * @method show_form()
-		 * @return view_path = /Views/planos/formulario.phtml
+		 * @return view_path = /Views/parceiros/formulario.phtml
 		 */
 		public function show_form()
 		{
 
 			$id = $this -> uri -> getSegment(3);
 
-			$dados['planos']  = $this -> plano_model;
-			$dados['tipos']   = $this -> tipo_plano_model -> getTipoPlano() -> getAll();
+			$dados['parceiros']  = $this -> parceiro_model;
+			// $dados['tipos']   = $this -> tipo_parceiro_model -> getTipoParceiro() -> getAll();
 
 			// Listar cidades e bairros para os selects do formulário cidades e bairros
-			$dados['cidades'] = $this -> cidade_model -> getCidadeUsuario() -> getAll();
-			$dados['bairros'] = $this -> cidade_model;
+			// $dados['cidades'] = $this -> cidade_model -> getCidadeUsuario() -> getAll();
+			// $dados['bairros'] = $this -> cidade_model;
 
 			if ( is_numeric($id) )
 			{
 
 				$dados['method'] = 'put';
-				$dados['row'] = $this -> plano -> fill($this -> plano_model -> getPlano(['id' => $id]) -> getRow());
+				$dados['row'] = $this -> parceiro -> fill($this -> parceiro_model -> getParceiro(['id' => $id]) -> getRow());
 
-				return $this -> view('planos/formulario', $dados);
+				return $this -> view('parceiros/formulario', $dados);
 
 			}
 
 			$dados['method'] = 'post';
-			return $this -> view('planos/formulario', $dados);
+			return $this -> view('parceiros/formulario', $dados);
 
 		}
 
@@ -142,23 +162,23 @@ namespace App\Controllers
 		public function create()
 		{
 
-			if ( $id = $this -> plano_model -> create() )
+			if ( $id = $this -> parceiro_model -> create() )
 			{
 
-				$this -> plano_model -> registraBairros($id);
+				$this -> parceiro_model -> registraBairros($id);
 				$type = 'success';
-				$msg = 'Plano cadastrado com sucesso.';
+				$msg = 'Parceiro cadastrado com sucesso.';
 			}
 			else
 			{
 				$type = 'error';
-				$msg = $this -> plano_model -> errors();
+				$msg = $this -> parceiro_model -> errors();
 			}
 
 			echo json_encode(array(
 				'type'/*		*/ => $type,
 				'msg'/*			*/ => $msg,
-				'url'/*			*/ => base_url() . 'planos/index',
+				'url'/*			*/ => base_url() . 'parceiros/index',
 				'redirect'/*	*/ => 'refresh'
 			));
 
@@ -172,24 +192,24 @@ namespace App\Controllers
 		 * Edita um registro já existente no banco de dados.
 		 *
 		 * @method datatable()
-		 * @return view_path = /Views/planos/formulario.phtml
+		 * @return view_path = /Views/parceiros/formulario.phtml
 		 */
 		public function update()
 		{
 
-			if ( $this -> plano_model -> edit() )
+			if ( $this -> parceiro_model -> edit() )
 			{
 
-				$this -> plano_model -> registraBairros();
+				$this -> parceiro_model -> registraBairros();
 
 				$type = 'success';
-				$msg = 'Plano atualizado com sucesso.';
+				$msg = 'Parceiro atualizado com sucesso.';
 			}
 			else
 			{
-				if ( $this -> plano_model -> errors() === NULL )
+				if ( $this -> parceiro_model -> errors() === NULL )
 				{
-					$this -> plano_model -> registraBairros();
+					$this -> parceiro_model -> registraBairros();
 
 					$type = 'success';
 					$msg = null;
@@ -197,14 +217,14 @@ namespace App\Controllers
 				else
 				{
 					$type = 'error';
-					$msg = $this -> plano_model -> errors();
+					$msg = $this -> parceiro_model -> errors();
 				}
 			}
 
 			echo json_encode(array(
 				'type'/*		*/ => $type,
 				'msg'/*			*/ => $msg,
-				'url'/*			*/ => base_url() . 'planos/index',
+				'url'/*			*/ => base_url() . 'parceiros/index',
 				'redirect'/*	*/ => 'refresh'
 			));
 
@@ -226,19 +246,19 @@ namespace App\Controllers
 		{
 
 			$delete = isset($_POST['excluir']) ? $_POST['excluir'] : true;
-			$planos = isset($_POST['planos']) ? $_POST['planos'] : $_POST['fields'];
+			$parceiros = $_POST['id'];
 
 			$type = 'warning';
-			$msg = 'Tem certeza que deseja excluir ' . count($planos) . ' ' . ((count($planos) == 1) ? 'plano selecionado' : 'planos selecionados') . '?';
-			$url = base_url() . 'planos';
+			$msg = 'Tem certeza que deseja excluir ' . count($parceiros) . ' ' . ((count($parceiros) == 1) ? 'parceiro selecionado' : 'parceiros selecionados') . '?';
+			$url = base_url() . 'parceiros';
 
 			if ( $delete )
 			{
-				if ( $this -> plano_model -> remove($planos) )
+				if ( $this -> parceiro_model -> remove($parceiros) -> getQuery('delete'))
 				{
 					$type = 'success';
-					$msg = count($planos) . ' ' . ((count($planos) == 1) ? 'registro excluído' : 'registros excluídos') . ' com sucesso ';
-					$url = base_url() . 'planos/index';
+					$msg = count($parceiros) . ' ' . ((count($parceiros) == 1) ? 'registro excluído' : 'registros excluídos') . ' com sucesso ';
+					$url = base_url() . 'parceiros/index';
 				}
 				else
 				{
@@ -251,7 +271,7 @@ namespace App\Controllers
 				'type'/*		*/ => $type,
 				'msg'/*			*/ => $msg,
 				'url'/*			*/ => $url,
-				'fields'/*		*/ => $planos,
+				'fields'/*		*/ => $parceiros,
 				'action'/*		*/ => 'excluir',
 				'redirect'/*	*/ => 'refresh',
 			));

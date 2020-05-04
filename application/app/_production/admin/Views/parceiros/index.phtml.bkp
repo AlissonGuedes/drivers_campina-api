@@ -1,0 +1,117 @@
+<div class="row">
+
+	<div class="top-bg gradient-45deg-indigo-purple lighten-1"></div>
+
+	<div class="col s12">
+
+		<div class="container">
+
+			<div class="sidebar">
+
+				<div class="header">
+					<h1 class="logo center">
+						<i class="material-icons">peoples</i>
+						Parceiros
+					</h1>
+				</div>
+
+				<div class="content mt-9">
+					<button class="btn btn-large green waves-effect waves-light">
+						<i class="material-icons left">add</i>
+						Adicionar
+					</button>
+				</div>
+
+			</div>
+
+			<div class="content center">
+
+				<div class="header">
+
+					<div class="search-wrapper">
+						<div class="search">
+							<i class="material-icons">search</i>
+							<input type="search" placeholder="Pesquisar Parceiro" class="">
+						</div>
+					</div>
+
+				</div>
+
+				<div class="card">
+					<div class="card-content no-padding">
+						<div class="card-header">
+							<div class="center">
+								<label>
+									<input type="checkbox" id="check-all">
+									<span></span>
+								</label>
+								<div class="buttons">
+									Ordem <button
+										class="btn btn-flat btn-floating transparent waves-effect dropdown-trigger"
+										data-target="order-by">
+										<i class="material-icons right grey-text text-darken-4">keyboard_arrow_down</i>
+									</button>
+									<ul id="order-by" class="dropdown-content" tabindex="0">
+										<li tabindex="0">
+											<a href="javascript:void(0);" class="-text">Nome do Parceiro</a>
+										</li>
+										<li tabindex="0">
+											<a href="#!" class="-text">.tar</a>
+										</li>
+										<li tabindex="0">
+											<a href="#!" class="-text">.exe</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="card-body no-padding">
+
+							<?php foreach($parceiros -> result() as $parceiro) : ?>
+							<ul class="list">
+								<li class="waves-effect">
+									<div class="item-row">
+										<div class="icon">
+											<label class="blue waves-effect">
+												<input type="checkbox" class="checkbox">
+												<i class="material-icons">check</i>
+											</label>
+											<img src="<?= site_url() . $parceiro -> logomarca; ?>"
+												class="circle z-depth-2 responsive-img avtar waves-effect" alt="">
+										</div>
+										<div class="desc">
+											<div class="info">
+												<div class="title">
+													<?= $parceiro -> nome; ?>
+												</div>
+												<div class="notes">
+												</div>
+												<div class="tags">
+													<div class="tag">
+														<div class="tag-color purple"></div>
+														<div class="tag-label"> <?= $parceiro -> categoria ?> </div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="buttons">
+											<button class="btn btn-flat btn-floating transparent waves-effect">
+												<i class="material-icons left grey-text text-darken-4">delete</i>
+											</button>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<?php endforeach; ?>
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>

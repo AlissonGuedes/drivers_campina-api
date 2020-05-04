@@ -50,6 +50,7 @@ namespace App\Models
 			parent :: __construct();
 
 			$this -> request = \Config\Services :: request();
+			$this -> uri = \Config\Services :: uri(current_url());
 
 			if ( $this -> returnType )
 				$this -> entity = new $this -> returnType();

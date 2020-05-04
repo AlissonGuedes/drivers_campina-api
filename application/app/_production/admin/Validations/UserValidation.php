@@ -64,7 +64,7 @@ namespace App\Validations
 					),
 				);
 
-			if ( ! isset($_POST['_method']) )
+			if ( ! isset($_POST['_method']) || (isset($_POST['_method']) && $_POST['_method'] === 'delete'))
 				return array();
 
 			$rules = array(
