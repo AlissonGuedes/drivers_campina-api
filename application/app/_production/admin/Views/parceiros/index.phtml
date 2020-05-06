@@ -154,16 +154,22 @@
 							<div class="table-body--content">
 
 								<?php if ( $parceiros -> numRows() > 0 ) : ?>
-
+								<?php $i = 0; ?>
 								<?php foreach($parceiros -> result() as $parceiro) : ?>
-								<div class="table-row waves-effect">
+
+								<?php for ($i = 1; $i <= 10; $i ++) : ?>
+								<div class="table-row waves-effect animated fadeInUp faster delay-<?= $i; ?>">
 
 									<div class="table-col checkbox center-align small-cell">
 
-										<label class="waves-effect btn-floating z-depth-2">
+										<label class="waves-effect btn-floating z-depth-2 blue lighten-1">
 											<input type="checkbox" name="id[]" class="trash">
 											<i class="material-icons">check</i>
+											<?php if( $parceiro -> logomarca !== '' && file_exists( site_url() . $parceiro -> logomarca) ) : ?>
 											<img src="<?= site_url() . $parceiro -> logomarca; ?>" class="" alt="">
+											<?php else : ?>
+											<?= $parceiro -> nome[0]; ?>
+											<?php endif; ?>
 										</label>
 
 									</div>
@@ -175,6 +181,7 @@
 									</div>
 
 								</div>
+								<?php endfor; ?>
 								<?php endforeach; ?>
 
 								<?php else : ?>
@@ -203,7 +210,7 @@
 
 				<form action="<?= base_url(); ?>parceiros" autocomplete="off">
 
-					<div class="card-content">
+					<div class="card-content no-padding">
 
 						<div class="card-header">
 
@@ -217,130 +224,125 @@
 
 						</div>
 
-						<div class="row">
+						<div class="card-body pt-2 pb-2 pl-4 pr-4">
 
-
-							<div class="col s6 l7 offset-l2">
-
-								<div class="row">
-									<!-- nome -->
-									<div class="col s6 l12">
-										<div class="input-field inline grey lighten-4">
-											<i class="prefix material-icons black-text">people</i>
-											<i class="sufix material-icons black-text">people</i>
-											<label for="nome" class="<?= isset($row) ? '' : null; ?> grey-text">
-												Nome
-											</label>
-											<input type="text" name="nome"
-												value="<?= isset($row) ? $row -> getNome() : null; ?>" id="nome">
-										</div>
+							<div class="row">
+								<!-- nome -->
+								<div class="col s6 l12">
+									<div class="input-field inline grey lighten-4">
+										<i class="prefix material-icons black-text">people</i>
+										<i class="sufix material-icons black-text">people</i>
+										<label for="nome" class="<?= isset($row) ? '' : null; ?> grey-text">
+											Nome
+										</label>
+										<input type="text" name="nome" autofocus="autofocus"
+											value="<?= isset($row) ? $row -> getNome() : null; ?>" id="nome">
 									</div>
-									<!--/nome -->
 								</div>
+								<!--/nome -->
+							</div>
 
-								<div class="row">
+							<div class="row">
 
 
-									<!-- cep -->
-									<div class="col s3">
-										<div class="input-field inline grey lighten-4">
-											<input type="text" name="cep"
-												value="<?= isset($row) ? $row -> getNome() : null; ?>" id="cep">
-											<label for="cep" class="<?= isset($row) ? '' : null; ?> grey-text">
-												CEP
-											</label>
-										</div>
+								<!-- cep -->
+								<div class="col s3">
+									<div class="input-field inline grey lighten-4">
+										<input type="text" name="cep"
+											value="<?= isset($row) ? $row -> getNome() : null; ?>" id="cep">
+										<label for="cep" class="<?= isset($row) ? '' : null; ?> grey-text">
+											CEP
+										</label>
 									</div>
-									<!--/cep -->
-
-									<!-- logradouro -->
-									<div class="col s6">
-										<div class="input-field inline grey lighten-4">
-											<input type="text" name="logradouro"
-												value="<?= isset($row) ? $row -> getNome() : null; ?>" id="logradouro">
-											<label for="logradouro" class="<?= isset($row) ? '' : null; ?> grey-text">
-												Endereço
-											</label>
-										</div>
-									</div>
-									<!--/logradouro -->
-
-									<!-- numero -->
-									<div class="col s3">
-										<div class="input-field inline grey lighten-4">
-											<input type="text" name="numero"
-												value="<?= isset($row) ? $row -> getNome() : null; ?>" id="numero">
-											<label for="numero" class="<?= isset($row) ? '' : null; ?> grey-text">
-												Número
-											</label>
-										</div>
-									</div>
-									<!--/numero -->
-
 								</div>
+								<!--/cep -->
 
-								<div class="row">
-
-									<!-- bairro -->
-									<div class="col s6">
-										<div class="input-field inline grey lighten-4">
-											<input type="text" name="bairro"
-												value="<?= isset($row) ? $row -> getNome() : null; ?>" id="bairro">
-											<label for="bairro" class="<?= isset($row) ? '' : null; ?> grey-text">
-												Bairro
-											</label>
-										</div>
+								<!-- logradouro -->
+								<div class="col s6">
+									<div class="input-field inline grey lighten-4">
+										<input type="text" name="logradouro"
+											value="<?= isset($row) ? $row -> getNome() : null; ?>" id="logradouro">
+										<label for="logradouro" class="<?= isset($row) ? '' : null; ?> grey-text">
+											Endereço
+										</label>
 									</div>
-									<!--/logradouro -->
-
-									<!-- complemento -->
-									<div class="col s6">
-										<div class="input-field inline grey lighten-4">
-											<input type="text" name="complemento"
-												value="<?= isset($row) ? $row -> getNome() : null; ?>" id="complemento">
-											<label for="complemento" class="<?= isset($row) ? '' : null; ?> grey-text">
-												Complemento
-											</label>
-										</div>
-									</div>
-									<!--/logradouro -->
-
 								</div>
+								<!--/logradouro -->
 
-								<div class="row">
-
-									<!-- cidade -->
-									<div class="col s10">
-										<div class="input-field inline grey lighten-4">
-											<input type="text" name="cidade"
-												value="<?= isset($row) ? $row -> getNome() : null; ?>" id="cidade">
-											<label for="cep" class="<?= isset($row) ? '' : null; ?> grey-text">
-												Cidade
-											</label>
-										</div>
+								<!-- numero -->
+								<div class="col s3">
+									<div class="input-field inline grey lighten-4">
+										<input type="text" name="numero"
+											value="<?= isset($row) ? $row -> getNome() : null; ?>" id="numero">
+										<label for="numero" class="<?= isset($row) ? '' : null; ?> grey-text">
+											Número
+										</label>
 									</div>
-									<!--/cidade -->
+								</div>
+								<!--/numero -->
 
-									<!-- estado -->
-									<div class="col s2">
-										<div class="input-field inline grey lighten-4">
-											<input type="text" name="estado"
-												value="<?= isset($row) ? $row -> getNome() : null; ?>" id="estado">
-											<label for="estado" class="<?= isset($row) ? '' : null; ?> grey-text">
-												UF
-											</label>
-										</div>
+							</div>
+
+							<div class="row">
+
+								<!-- bairro -->
+								<div class="col s6">
+									<div class="input-field inline grey lighten-4">
+										<input type="text" name="bairro"
+											value="<?= isset($row) ? $row -> getNome() : null; ?>" id="bairro">
+										<label for="bairro" class="<?= isset($row) ? '' : null; ?> grey-text">
+											Bairro
+										</label>
 									</div>
-									<!--/estado -->
+								</div>
+								<!--/logradouro -->
 
-									<div class="col s12">
-										<div class="input-field border-0">
-											<button class="btn btn-large border-round teal waves-effect">
-												<i class="material-icons left">save</i> salvar
-											</button>
-										</div>
+								<!-- complemento -->
+								<div class="col s6">
+									<div class="input-field inline grey lighten-4">
+										<input type="text" name="complemento"
+											value="<?= isset($row) ? $row -> getNome() : null; ?>" id="complemento">
+										<label for="complemento" class="<?= isset($row) ? '' : null; ?> grey-text">
+											Complemento
+										</label>
 									</div>
+								</div>
+								<!--/logradouro -->
 
+							</div>
+
+							<div class="row">
+
+								<!-- cidade -->
+								<div class="col s10">
+									<div class="input-field inline grey lighten-4">
+										<input type="text" name="cidade"
+											value="<?= isset($row) ? $row -> getNome() : null; ?>" id="cidade">
+										<label for="cep" class="<?= isset($row) ? '' : null; ?> grey-text">
+											Cidade
+										</label>
+									</div>
+								</div>
+								<!--/cidade -->
+
+								<!-- estado -->
+								<div class="col s2">
+									<div class="input-field inline grey lighten-4">
+										<input type="text" name="estado"
+											value="<?= isset($row) ? $row -> getNome() : null; ?>" id="estado">
+										<label for="estado" class="<?= isset($row) ? '' : null; ?> grey-text">
+											UF
+										</label>
+									</div>
+								</div>
+								<!--/estado -->
+
+								<div class="col s12">
+									<div class="input-field border-0">
+										<button class="btn btn-large border-round teal waves-effect">
+											<i class="material-icons left">save</i> salvar
+										</button>
+									</div>
 								</div>
 
 							</div>

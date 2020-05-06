@@ -267,7 +267,7 @@ var DataTable = {
             $('#page-form').show();
             $('#page-form').find('*').attr('disabled', false);
             $('#adicionar').attr('disabled', true);
-            $('input[type="text"]')[0].focus();
+            $('[autofocus]').focus();
         })
 
         $('#back-list').on('click', function() {
