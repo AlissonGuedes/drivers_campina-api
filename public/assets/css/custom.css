@@ -232,21 +232,22 @@
 
 .container-right .card .card-content .card-header {
     display: flex;
-align-items: center;
-margin: 0;
-padding: 12px;
-border-bottom: 1px solid #9e9e9e;
-line-height: 1;
+    align-items: center;
+    margin: 0;
+    padding: 12px;
+    border-bottom: 1px solid #9e9e9e;
+    line-height: 1;
 }
 
-.container-right .card .card-content .card-header h5{
+.container-right .card .card-content .card-header h5 {
     font-size: 18px;
-font-family: 'Muli';
+    font-family: 'Muli';
 }
 
 .container-right .card .card-content .card-header button {
     margin-right: 15px;
 }
+
 
 /** div.table */
 

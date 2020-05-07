@@ -328,10 +328,10 @@ $(document).ready(function() {
             }
         })
     }),
-    $(window).on("resize", function() {
-        resizetable(), $(".email-compose-sidebar").removeClass("show"), $(".email-overlay").removeClass("show"), $(
-            "input").val(""), $(".compose-editor .ql-editor p").html(""), $("#edit-item-from").val(
-            "user@example.com"), 899 < $(window).width() && $("#email-sidenav").removeClass("sidenav"), $(
-            window).width() < 900 && $("#email-sidenav").addClass("sidenav")
-    }),
+    // $(window).on("resize", function() {
+    //     resizetable(), $(".email-compose-sidebar").removeClass("show"), $(".email-overlay").removeClass("show"), $(
+    //         "input").val(""), $(".compose-editor .ql-editor p").html(""), $("#edit-item-from").val(
+    //         "user@example.com"), 899 < $(window).width() && $("#email-sidenav").removeClass("sidenav"), $(
+    //         window).width() < 900 && $("#email-sidenav").addClass("sidenav")
+    // }),
     resizetable();
